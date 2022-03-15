@@ -11,6 +11,7 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from rango.models import UserProfile
 from django.contrib.auth.models import User
+from rango.bing_search import run_query
 
 class IndexView(View):
     def get(self, request):
@@ -237,3 +238,15 @@ class ProfileView(View):
                             'form': form}
         
         return render(request, 'rango/profile.html', context_dict)
+
+def search(request):
+    result_list = []
+    query = ''
+    
+    if request.method == 'POST':
+        query = request.POST['query'].strip()
+        
+        if query:
+            result_list = run_query(query)
+    
+    return render(request, 'rango/search.html', {'result_list': result_list, 'query': query})
