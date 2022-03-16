@@ -8,28 +8,12 @@ from django.contrib.auth.models import User
 # imported from django.contrib.auth.models
 class UserEntity(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    profile_picture = models.ImageField()
+    profile_picture = models.ImageField(blank=True)
     login_status = models.BooleanField(default=False)
-    followed_users = models.ManyToManyField("self", symmetrical=False)
+    followed_users = models.ManyToManyField("self", symmetrical=False, blank=True)
 
     class Meta:
         verbose_name_plural = 'User Entities'
-    
-    def __str__(self):
-        return self.name
-
-class Medium(models.Model):
-    name = models.CharField(max_length=50)
-    description = models.CharField(max_length=200)
-    thumbnail = models.ImageField()
-    publish_date = models.DateField()
-    views = models.IntegerField()
-    likes = models.IntegerField()
-    medium_author = models.ForeignKey(UserEntity, on_delete=models.CASCADE)
-    medium_category = models.ManyToManyField(MediaCategory, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name_plural = 'Media'
     
     def __str__(self):
         return self.name
@@ -43,10 +27,26 @@ class MediaCategory(models.Model):
     def __str__(self):
         return self.name
 
+class Medium(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=200, blank=True)
+    thumbnail = models.ImageField()
+    publish_date = models.DateTimeField()
+    views = models.IntegerField(default=0)
+    likes = models.IntegerField(default=0)
+    medium_author = models.ForeignKey(UserEntity, on_delete=models.CASCADE)
+    medium_categories = models.ManyToManyField(MediaCategory, blank=True)
+
+    class Meta:
+        verbose_name_plural = 'Media'
+    
+    def __str__(self):
+        return self.name
+
 class Review(models.Model):
     text = models.CharField(max_length=200)
-    upload_date = models.DateField()
-    likes = models.IntegerField()
+    upload_date = models.DateTimeField()
+    likes = models.IntegerField(default=0)
     reviewed_medium = models.ForeignKey(Medium, on_delete=models.CASCADE)
     review_author = models.ForeignKey(UserEntity, on_delete=models.CASCADE)
     
