@@ -4,6 +4,57 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+# Named UserEntity instead of User to prevent from clashing with code
+# imported from django.contrib.auth.models
+class UserEntity(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    profile_picture = models.ImageField()
+    login_status = models.BooleanField(default=False)
+    followed_users = models.ManyToManyField("self", symmetrical=False)
+
+    class Meta:
+        verbose_name_plural = 'User Entities'
+    
+    def __str__(self):
+        return self.name
+
+class Medium(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=200)
+    thumbnail = models.ImageField()
+    publish_date = models.DateField()
+    views = models.IntegerField()
+    likes = models.IntegerField()
+
+    class Meta:
+        verbose_name_plural = 'Media'
+    
+    def __str__(self):
+        return self.name
+
+class MediaCategory(models.Model):
+    name = models.CharField(max_length=50)
+
+    class Meta:
+        verbose_name_plural = 'Media Categories'
+    
+    def __str__(self):
+        return self.name
+
+class Review(models.Model):
+    text = models.CharField(max_length=200)
+    upload_date = models.DateField()
+    likes = models.IntegerField()
+    
+    def __str__(self):
+        return self.text
+
+
+
+
+
+#Old rango models for reference
+
 class Category(models.Model):
     NAME_MAX_LENGTH = 128
     
@@ -42,3 +93,4 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
