@@ -19,7 +19,7 @@ class IndexView(View):
         page_list = Page.objects.order_by('-views')[:5]
     
         context_dict = {}
-        context_dict['boldmessage'] = 'Crunchy, creamy, cookie, candy, cupcake!'
+        context_dict['boldmessage'] = 'Click a link and get exploring'
         context_dict['categories'] = category_list
         context_dict['pages'] = page_list
     
@@ -239,14 +239,14 @@ class ProfileView(View):
         
         return render(request, 'rango/profile.html', context_dict)
 
-def search(request):
-    result_list = []
-    query = ''
-    
-    if request.method == 'POST':
-        query = request.POST['query'].strip()
-        
-        if query:
-            result_list = run_query(query)
-    
-    return render(request, 'rango/search.html', {'result_list': result_list, 'query': query})
+##def search(request):
+##    result_list = []
+##    query = ''
+##    
+##    if request.method == 'POST':
+##        query = request.POST['query'].strip()
+##        
+##        if query:
+##            result_list = run_query(query)
+##    
+##    return render(request, 'rango/search.html', {'result_list': result_list, 'query': query})
