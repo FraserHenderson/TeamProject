@@ -25,6 +25,8 @@ class Medium(models.Model):
     publish_date = models.DateField()
     views = models.IntegerField()
     likes = models.IntegerField()
+    medium_author = models.ForeignKey(UserEntity, on_delete=models.CASCADE)
+    medium_category = models.ManyToManyField(MediaCategory, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name_plural = 'Media'
@@ -45,6 +47,8 @@ class Review(models.Model):
     text = models.CharField(max_length=200)
     upload_date = models.DateField()
     likes = models.IntegerField()
+    reviewed_medium = models.ForeignKey(Medium, on_delete=models.CASCADE)
+    review_author = models.ForeignKey(UserEntity, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.text
