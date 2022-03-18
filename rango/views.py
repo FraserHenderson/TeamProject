@@ -82,7 +82,7 @@ class AddCategoryView(View):
         
         if form.is_valid():
             form.save(commit=True)
-            return index(request)
+            return IndexView(request)
         else:
             print(form.errors)
         
