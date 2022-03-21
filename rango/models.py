@@ -2,10 +2,12 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 
+import datetime
+from datetime import datetime
+
 # Create your models here.
 
-# Named UserEntity instead of User to prevent from clashing with code
-# imported from django.contrib.auth.models
+# Named UserEntity instead of User to prevent from clashing with code imported from django.contrib.auth.models
 class UserEntity(models.Model):
     name = models.CharField(max_length=100, unique=True)
     profile_picture = models.ImageField(blank=True)
@@ -29,13 +31,13 @@ class MediaCategory(models.Model):
 
 class Medium(models.Model):
     name = models.CharField(max_length=50)
-    description = models.CharField(max_length=200, blank=True)
+    description = models.CharField(max_length=200, default='')
     thumbnail = models.ImageField()
-    publish_date = models.DateTimeField()
+    publish_date = models.DateTimeField(default=datetime.strptime((str(datetime.now()))[:19], '%Y-%m-%d %H:%M:%S'))
     views = models.IntegerField(default=0)
     likes = models.IntegerField(default=0)
     medium_author = models.ForeignKey(UserEntity, on_delete=models.CASCADE)
-    medium_categories = models.ManyToManyField(MediaCategory, blank=True)
+    medium_category = models.ForeignKey(MediaCategory, on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = 'Media'
@@ -45,7 +47,7 @@ class Medium(models.Model):
 
 class Review(models.Model):
     text = models.CharField(max_length=200)
-    upload_date = models.DateTimeField()
+    upload_date = models.DateTimeField(default=datetime.strptime((str(datetime.now()))[:19], '%Y-%m-%d %H:%M:%S'))
     likes = models.IntegerField(default=0)
     reviewed_medium = models.ForeignKey(Medium, on_delete=models.CASCADE)
     review_author = models.ForeignKey(UserEntity, on_delete=models.CASCADE)
