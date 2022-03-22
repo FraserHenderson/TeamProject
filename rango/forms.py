@@ -54,8 +54,8 @@ class MediumForm(forms.ModelForm):
     #publish_date = forms.DateTimeField(default=datetime.strptime((str(datetime.now()))[:19], '%Y-%m-%d %H:%M:%S'))
     #views = forms.IntegerField(default=0)
     #likes = forms.IntegerField(default=0)
-    #medium_author = forms.ForeignKey(UserEntity, on_delete=models.CASCADE)
-    #medium_category = forms.ForeignKey(MediaCategory, on_delete=models.CASCADE, blank=True, null=True)
+    medium_author = forms.ForeignKey(UserEntity, on_delete=models.CASCADE)
+    medium_category = forms.ForeignKey(MediaCategory, on_delete=models.CASCADE, blank=True, null=True)
     class Meta:
         model = Medium
         fields = ('name', 'description', 'thumbnail', )
