@@ -41,7 +41,7 @@
 
                         <li class="nav-item"><a class="nav-link" href="{% url 'rango:profile' user.username %}">My Collection</a></li>
 
-                        <li class="nav-item"><a class="nav-link" href="{% url 'rango:new_post' user.username %}">Create New Post</a>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'rango:profile' user.username %}">Create New Post</a>
 
                         <li class="nav-item"><a class="nav-link" href="{% url 'rango:add_category' %}">List of Category Requests</a></li>
                         {% else %}
@@ -63,9 +63,34 @@
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Sign In
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-dark bg-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-                          <li><a class="dropdown-item " href="{% url 'registration_register' %}">Register</a></li>
-                          <li><a class="dropdown-item" href="{% url 'auth_login' %}">Login</a></li>
+                        <div class="dropdown-menu">
+                          <form class="form-signin px-4 py-3" role="form" method="post" action="{% url 'auth_login' %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                              <label for="inputUsername" class=" form-label ">Username</label>
+                              <input type="text" name="username" id="id_username" class="form-control"
+                              placeholder="Username" required autofocus>
+                            </div>
+                            <div class="mb-3">
+                              <label for="inputPassword" class="form-label">Password</label>
+                              <input type="password" name="password" id="id_password" class="form-control"
+                              placeholder="Password" required>
+                            </div>
+                            <div class="mb-3">
+                              <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="dropdownCheck">
+                                <label class="form-check-label" for="dropdownCheck">
+                                  Remember me
+                                </label>
+                              </div>
+                            </div>
+                            <button class="btn btn-lg btn-dark btn-block" type="submit"
+                            value="Submit">Sign in</button>
+                          </form>
+                          <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'registration_register' %}">New around here? Sign up</a>
+                        </div>
+                        
                         {% endif %}
                         </ul>
                       </li>
