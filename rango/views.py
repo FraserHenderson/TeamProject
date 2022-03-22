@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from rango.models import Category
-from rango.models import Page
-from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
+from rango.models import Page, Medium, MediaCategory
+from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm, MediumForm
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
@@ -238,6 +238,62 @@ class ProfileView(View):
                             'form': form}
         
         return render(request, 'rango/profile.html', context_dict)
+
+
+
+class MediumView(View):
+    def get_user_details(self, username):
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return None
+        
+        userprofile = UserProfile.objects.get_or_create(user=user)[0]
+        
+        return (user, userprofile)
+    
+    @method_decorator(login_required)
+    def get(self, request, username):
+        try:
+            (user, userprofile) = self.get_user_details(username)
+            form = MediumForm()
+        except TypeError:
+            return redirect('rango:index')
+        
+        category_list = MediaCategory.objects.order_by('name')
+        context_dict = {'form' : form, 'user': user, 'userprofile': userprofile, 'category_list' : category_list}
+        
+
+        return render(request, 'rango/new_post.html', context_dict)
+    
+    @method_decorator(login_required)
+    def post(self, request, username):
+        try:
+            (user, userprofile) = self.get_user_details(username)
+        except TypeError:
+            return redirect('rango:index')
+        
+        if user == request.user:  # Added for authentication exercise.
+            form = MediumForm(request.POST, request.FILES, instance=userprofile)
+        
+            if form.is_valid():
+                medium = form.save(commit=False)
+                medium.medium_author = user
+                #medium.medium_category = MediaCategory.objects.get(name=<insert the variable modified by dropdown menu>)
+                medium.likes = 0
+                medium.views = 0
+                medium.publish_date = datetime.strptime((str(datetime.now()))[:19], '%Y-%m-%d %H:%M:%S')
+                medium.save()
+                
+                return redirect('rango:profile', user.username)
+            else:
+                print(form.errors)
+        
+            context_dict = {'form' : form, 'user': user, 'userprofile': userprofile}
+        
+        return render(request, 'rango/new_post.html', context_dict)
+
+
 
 ##def search(request):
 ##    result_list = []

@@ -14,26 +14,27 @@
     
     <div class="container">
         <div class="row">
-            <img src="{{ MEDIA_URL }}{{ userprofile.picture }}"
-                 width="300"
-                 height="300"
-                 alt="{{ selecteduser.username }}'s new post thumbnail" />
             <br />
             <div>
-                {% if selecteduser == user %}
                 <form method="post" action="." enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form.as_p }}
+                    <div class="dropdown">
+                        <button class="dropbtn">Dropdown</button>
+                              <div class="dropdown-content">
+                                {% for category in category_list %}
+                                <a href="#">{{ category.name }}</a>
+                               {% endfor %}
+
+              </div>
+            </div>
                     
                     <input type="submit" value="Update" />
                 </form>
-                {% else %}
-                <p>
-                    <strong>Website:</strong>
-                    <a href="{{ userprofile.website }}">{{ userprofile.website }}</a>
-                </p>
-                {% endif %}
             </div>
         </div>
     </div>
+
+
 {% endblock %}
+
