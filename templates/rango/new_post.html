@@ -11,59 +11,33 @@
             <h1 class="jumotron-heading">Create New Post</h1>
         </div>
     </div>
-
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script>
-
-var subjectObject = {
-  "Animals": 1 ,
-  "Landscapes": 1,
-  "Still need to figure out how this works" : 1
-}
-window.onload = function() {
-  var subjectSel = document.getElementById("subject");
-  for (var x in subjectObject) {
-    subjectSel.options[subjectSel.options.length] = new Option(x, x);
-  }
-}
-
-</script>
-</head> 
-    
-    <div class="container">
+<div class="container">
         <div class="row">
             <br />
             <div>
-                <form name="form1" id="form1" action="/action_page.php">
-                  {% csrf_token %}
-                    {{ form.as_p }}  
-<form name="form1" id="form1" action="/action_page.php">
-Subjects: <select name="subject" id="subject">
-    <option value="" selected="selected">Select subject</option>
-  </select>
-  <br><br>
-</form>
-<input type="submit" value="Update" />
-
-
-
-
                 <form method="post" action="." enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
                     <div class="dropdown">
-                        <button class="dropbtn">Dropdown</button>
-                              <div class="dropdown-content">
+                              <select name="dropdown">
+                                <option value = "No Category" selected> No Category </option>
                                 {% for category in category_list %}
-                                <a href="#">{{ category.name }}</a>
+                               <option value = "{{ category.name }}">{{ category.name }}</option>
                                {% endfor %}
-
+                           </select>
+                <br><br>
               </div>
             </div>
+
+    
                     
-                </form>
-            </div>
-        </div>
-    </div>
+            <input type="submit" value="Post" />
+            </form>
+
+
+
+
+
 
 
 
