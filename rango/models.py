@@ -11,7 +11,6 @@ from datetime import datetime
 class UserEntity(models.Model):
     name = models.CharField(max_length=100, unique=True)
     profile_picture = models.ImageField(blank=True)
-    login_status = models.BooleanField(default=False)
     followed_users = models.ManyToManyField("self", symmetrical=False, blank=True)
 
     class Meta:
@@ -21,7 +20,7 @@ class UserEntity(models.Model):
         return self.name
 
 class MediaCategory(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
 
     class Meta:
         verbose_name_plural = 'Media Categories'
@@ -58,7 +57,6 @@ class Review(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    website = models.URLField(blank=True)
     picture = models.ImageField(upload_to='profile_images', blank=True)
 
     def __str__(self):

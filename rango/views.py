@@ -12,6 +12,11 @@ from rango.models import UserProfile
 from django.contrib.auth.models import User
 from rango.bing_search import run_query
 
+
+import logging
+logger = logging.getLogger(__name__)
+
+
 class IndexView(View):
     def get(self, request):
         posts_list = Medium.objects.order_by('-publish_date')[:5]
@@ -22,7 +27,6 @@ class IndexView(View):
         context_dict['posts'] = posts_list
         context_dict['media_categories'] = media_categories_list
         context_dict['users'] = users_list
-
     
         visitor_cookie_handler(request)
     
@@ -114,9 +118,7 @@ class RegisterProfileView(View):
 
             u = UserEntity.objects.get_or_create(name=request.user.username)[0]
             u.name = request.user.username
-            #u.profile_picture = profile_picture
             u.profile_picture = form['picture'].value()
-            u.login_status = False
             u.save()
 
             return redirect('rango:index')
@@ -134,8 +136,7 @@ class ProfileView(View):
             return None
         
         userprofile = UserProfile.objects.get_or_create(user=user)[0]
-        form = UserProfileForm({'website': userprofile.website,
-                                'picture': userprofile.picture})
+        form = UserProfileForm({'picture': userprofile.picture})
         
         return (user, userprofile, form)
     
@@ -219,22 +220,22 @@ class MediumView(View):
         except TypeError:
             return redirect('rango:index')
         
-        if user == request.user:  # Added for authentication exercise.
-            form = MediumForm(request.POST, request.FILES, instance=userprofile)
-            context_dict['form'] = form
+
+        form = MediumForm(request.POST, request.FILES)
+        context_dict['form'] = form
         
-            if form.is_valid():
-                medium = form.save(commit=False)
-                medium.medium_author = UserEntity.objects.get(name=user.username)
-                #medium.medium_category = MediaCategory.objects.get(name=request.dropdown)
-                medium.likes = 0
-                medium.views = 0
-                medium.publish_date = datetime.strptime((str(datetime.now()))[:19], '%Y-%m-%d %H:%M:%S')
-                medium.save()
+        if form.is_valid():
+            medium = form.save(commit=False)
+            medium.medium_author = UserEntity.objects.get(name=user.username)
+            medium.medium_category = MediaCategory.objects.get(name=request.POST["dropdown"])
+            medium.likes = 0
+            medium.views = 0
+            medium.publish_date = datetime.strptime((str(datetime.now()))[:19], '%Y-%m-%d %H:%M:%S')
+            medium.save()
                 
-                return redirect('rango:profile', user.username)
-            else:
-                print(form.errors)
+            return redirect('rango:profile', user.username)
+        else:
+            print(form.errors)
         
 
         users_list = UserEntity.objects.order_by('name')

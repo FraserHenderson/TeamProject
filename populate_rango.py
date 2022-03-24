@@ -5,7 +5,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE',
 
 import django
 django.setup()
-from rango.models import Category, Page, UserEntity, Medium, MediaCategory, Review
+from rango.models import UserEntity, Medium, MediaCategory, Review
 
 from datetime import datetime
 from django.core.files import File
@@ -96,53 +96,7 @@ def populate():
         'review_author': 'Matas'},
     ]
 
-    # Old stuff
-    python_pages = [
-        {'title': 'Official Python Tutorial',
-        'url':'http://docs.python.org/3/tutorial/',
-        'views':1},
-        {'title':'How to Think like a Computer Scientist',
-        'url':'http://www.greenteapress.com/thinkpython/',
-        'views':10},
-        {'title':'Learn Python in 10 Minutes',
-        'url':'http://www.korokithakis.net/tutorials/python/',
-        'views':11} ]
-
-    django_pages = [
-        {'title':'Official Django Tutorial',
-        'url':'https://docs.djangoproject.com/en/2.1/intro/tutorial01/',
-        'views':12},
-        {'title':'Django Rocks',
-        'url':'http://www.djangorocks.com/',
-        'views':17},
-        {'title':'How to Tango with Django',
-        'url':'http://www.tangowithdjango.com/',
-        'views':22} ]
-
-    other_pages = [
-        {'title':'Bottle',
-        'url':'http://bottlepy.org/docs/dev/',
-        'views':5},
-        {'title':'Flask',
-        'url':'http://flask.pocoo.org',
-        'views':8} ]
-
-    cats = {'Python': {'pages': [python_pages,128,64]},
-        'Django': {'pages': [django_pages,64,32]},
-        'Other Frameworks': {'pages': [other_pages,32,16]} }
-    # Old stuff
-
-
-    # Old stuff
-    for cat, cat_data in cats.items():
-        c = add_cat(cat,views=cat_data['pages'][1],likes=cat_data['pages'][2])
-        for p in cat_data['pages'][0]:
-            add_page(c,p['title'], p['url'], views=p['views'])
-
-    for c in Category.objects.all():
-        for p in Page.objects.filter(category=c):
-            print(f'- {c}: {p}')
-    # Old stuff
+   
 
     for user_data in users:
         add_user(name=user_data['name'], profile_picture=user_data['profile_picture'], login_status=user_data['login_status'], followed_users=user_data['followed_users'])
@@ -155,24 +109,6 @@ def populate():
     
     for review_data in reviews:
         add_review(text=review_data['text'], upload_date=review_data['upload_date'], likes=review_data['likes'], reviewed_medium=review_data['reviewed_medium'], review_author=review_data['review_author'])
-
-
-
-# Old stuff
-def add_page(cat, title, url, views=0):
-    p = Page.objects.get_or_create(category=cat, title=title)[0]
-    p.url=url
-    p.views=views
-    p.save()
-    return p
-
-def add_cat(name, views=0, likes=0):
-    c = Category.objects.get_or_create(name=name)[0]
-    c.likes = likes
-    c.views = views
-    c.save()
-    return c
-# Old stuff
 
 
 
