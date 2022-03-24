@@ -48,8 +48,8 @@ class UserProfileForm(forms.ModelForm):
         fields = ('picture',)
 
 class MediumForm(forms.ModelForm):
-    name = forms.CharField(max_length=50, help_text="Post Title: ")
-    description = forms.CharField(max_length=200, help_text="Post Desciption: ")
+    name = forms.CharField(max_length=50,)
+    description = forms.CharField(max_length=200,)
     thumbnail = forms.ImageField()
     #publish_date = forms.DateTimeField(default=datetime.strptime((str(datetime.now()))[:19], '%Y-%m-%d %H:%M:%S'))
     #views = forms.IntegerField(default=0)

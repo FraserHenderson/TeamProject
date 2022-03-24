@@ -17,11 +17,13 @@ class IndexView(View):
     def get(self, request):
         category_list = Category.objects.order_by('-likes')[:5]
         page_list = Page.objects.order_by('-views')[:5]
+        posts_list = Medium.objects.order_by('-publish_date')
     
         context_dict = {}
         context_dict['boldmessage'] = 'Click a link and get exploring'
         context_dict['categories'] = category_list
         context_dict['pages'] = page_list
+        context_dict['posts'] = posts_list
     
         visitor_cookie_handler(request)
     

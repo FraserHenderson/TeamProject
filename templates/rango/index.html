@@ -68,14 +68,18 @@ Homepage
 <div class="col-md-6">
 <div class="card mb-6">
 <div class="card-body">
+
+
+
 <h2>Most Popular User Profiles</h2>
 <p class="card-text">
-{% if categories %}
+{% if posts %}
 <ul class="list-group">
-{% for category in categories %}
+{% for post in posts %}
 <li class="list-group-item">
-<a href="{% url 'rango:show_category' category.slug %}">
-{{ category.name }}</a>
+  <img src="{{ MEDIA_URL }}{{ post.thumbnail }}" alt="{{ post.description }}"  height="100">
+  <br>
+{{ post.name }}
 </li>
 {% endfor %}
 </ul>
@@ -83,6 +87,8 @@ Homepage
 <strong>There are no categories present.</strong>
 {% endif %}
 </p>
+
+
 </div>
 </div>
 </div>
