@@ -8,16 +8,27 @@ About Rango
 {% block body_block %}
 <div class="jumbotron p-4">
     <div class="container">
-    <h1 class="jumbotron-heading">Rango says...</h1>
+    <h1 class="jumbotron-heading">List Of Shame</h1>
     </div>
 </div>
 
 <div>
-here is the about page. <br />
-<strong>{{ boldmessage }}</strong><br />
+    Welcome to the members of Team 5B
 </div>
+<br>
+<br>
 
-<img src="{% static 'images/rango.jpg' %}" alt="Picture of Rango" /> <!-- New line -->
-<img src="{{ MEDIA_URL }}cat.jpg" alt="Picture of a Cat" /> <!-- New line -->
-<p>Visits: {{ visits }}</p>
+<div>
+Once you have contributed to the project, you get a bold name :) <br />
+</div>
+<br>
+<li>
+    <strong> Fraser Henderson</strong></li>
+    <li><strong> Matas Remeika</strong></li>
+    <li><strong> Mingyang Chen</strong></li>
+    <li>Francisco Silva</li>
+    <li>James Browne</li>
+    <li>Jamie Howard<br><br><br></li>   
+
+
 {% endblock %}

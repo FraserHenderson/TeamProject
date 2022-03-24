@@ -9,9 +9,6 @@ Homepage
 <div class="jumbotron p-1">
 <div class="container">
 <h1 class="jumbotron-heading">Team 5B</h1>
-<div>
-<strong>{{ boldmessage }}</strong>
-</div>
 </div>
 </div>
 <div class="ml-8 w-78 input-group mb-3">
@@ -95,18 +92,20 @@ Homepage
 <div class="col-md-6">
 <div class="card mb-6">
 <div class="card-body">
-<h2>Trending Profiles</h2>
+
+<h2>User Profiles</h2>
 <p class="card-text">
-{% if pages %}
+{% if users %}
 <ul class="list-group">
-{% for page in pages %}
+{% for user in users %}
 <li class="list-group-item">
-<a href="{{ page.url }}">{{ page.title }}</a>
+ <!--<a href="{{ page.url }}">{{ page.title }}</a> -->
+ {{ user.name }}
 </li>
 {% endfor %}
 </ul>
 {% else %}
-<strong>There are no pages present.</strong>
+<strong>There are no users yet.</strong>
 {% endif %}
 </p>
 </div>

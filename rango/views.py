@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
-from rango.models import Category
-from rango.models import Page, Medium, MediaCategory, UserEntity
+from rango.models import Medium, MediaCategory, UserEntity
 from rango.forms import UserForm, UserProfileForm, MediumForm
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
@@ -15,16 +14,11 @@ from rango.bing_search import run_query
 
 class IndexView(View):
     def get(self, request):
-        category_list = Category.objects.order_by('-likes')[:5]
-        page_list = Page.objects.order_by('-views')[:5]
         posts_list = Medium.objects.order_by('-publish_date')[:5]
         users_list = UserEntity.objects.order_by('name')
         media_categories_list = MediaCategory.objects.order_by('name')
     
         context_dict = {}
-        context_dict['boldmessage'] = 'Click a link and get exploring'
-        context_dict['categories'] = category_list
-        context_dict['pages'] = page_list
         context_dict['posts'] = posts_list
         context_dict['media_categories'] = media_categories_list
         context_dict['users'] = users_list
@@ -38,10 +32,8 @@ class IndexView(View):
 
 class AboutView(View):
     def get(self, request):
-        context_dict = {}
-        context_dict['visits'] = request.session['visits']
         
-        return render(request, 'rango/about.html', context_dict)
+        return render(request, 'rango/about.html')
 
 class ShowCategoryView(View):
     def create_context_dict(self, category_name_slug):
@@ -80,7 +72,8 @@ class ShowCategoryView(View):
 class AddCategoryView(View):
     @method_decorator(login_required)
     def get(self, request):
-        form = CategoryForm()
+        #form = CategoryForm()
+        form = None;
         return render(request, 'rango/add_category.html', {'form': form})
     
     @method_decorator(login_required)

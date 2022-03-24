@@ -21,6 +21,8 @@
                  alt="{{ selecteduser.username }}'s profile image" />
             <br />
             <div>
+                <br>
+                <br>
                 {% if selecteduser == user %}
                 <form method="post" action="." enctype="multipart/form-data">
                     {% csrf_token %}
