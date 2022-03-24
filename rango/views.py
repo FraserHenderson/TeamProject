@@ -137,53 +137,49 @@ class ProfileView(View):
         
         userprofile = UserProfile.objects.get_or_create(user=user)[0]
         form = UserProfileForm({'picture': userprofile.picture})
+        posts = Medium.objects.filter(medium_author__name__exact=username)
+        users_list = UserEntity.objects.order_by('name')
         
-        return (user, userprofile, form)
+        return (user, userprofile, form, posts, users_list)
     
     @method_decorator(login_required)
     def get(self, request, username):
         try:
-            (user, userprofile, form) = self.get_user_details(username)
+            (user, userprofile, form, posts, users_list) = self.get_user_details(username)
         except TypeError:
             return redirect('rango:index')
         
-        users_list = UserEntity.objects.order_by('name')
-        
         context_dict = {'userprofile': userprofile,
-                            'selecteduser': user,
-                            'form': form}
-        context_dict['users'] = users_list
+                        'selecteduser': user,
+                        'form': form,
+                        'posts': posts,
+                        'users_list': users_list}
         
         return render(request, 'rango/profile.html', context_dict)
     
     @method_decorator(login_required)
     def post(self, request, username):
         try:
-            (user, userprofile, form) = self.get_user_details(username)
+            (user, userprofile, form, posts, users_list) = self.get_user_details(username)
         except TypeError:
             return redirect('rango:index')
         
         if user == request.user:  # Added for authentication exercise.
             form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
-
+        
             if form.is_valid():
-
-                form.save(commit=True) 
-
+                form.save(commit=True)
                 return redirect('rango:profile', user.username)
             else:
                 print(form.errors)
         
-            users_list = UserEntity.objects.order_by('name')
-        
             context_dict = {'userprofile': userprofile,
                             'selecteduser': user,
-                            'form': form}
-            context_dict['users'] = users_list
+                            'form': form,
+                            'posts': posts,
+                            'users_list': users_list}
         
         return render(request, 'rango/profile.html', context_dict)
-
-
 
 class MediumView(View):
     def get_user_details(self, username):
@@ -263,3 +259,12 @@ class MyCollectionView(View):
         response = render(request, 'rango/index.html', context_dict)
     
         return response
+    
+def search(request):
+    if request.method == 'POST':
+        query = request.POST['query']
+        results = Medium.objects.filter(name__contains=query)
+        
+        return render(request, 'rango/search.html', {'query': query, 'results': results})
+    else:
+        return render(request, 'rango/search.html', {})

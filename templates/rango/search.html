@@ -12,30 +12,33 @@
         </div>
     </div>
     <div>
-        <form class="form-inline" id="user-form" method="post" action="{% url 'rango:search' %}">
-            {% csrf_token %}
+        {% if query %}
+            <h2>Results for {{ query }}:</h2>
             
-            <div class="form-group">
-                <input class="form-control" type="text" size="50" name="query" value="{{ query }}" id="query" />
+            {% for result in results %}
+            <div class="card">
+                <div class="card-header">
+                    {{ result }}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Author: {{result.medium_author.name}}</h5>
+                    <img src={{ MEDIA_URL }}{{result.thumbnail}} alt={{ result }}>
+                    <p class="card-text">
+                        <ul>
+                            <li>Category: {{result.medium_category.name}}</li>
+                            <li>Description: {{result.description}}</li>
+                            <li>Publish Date: {{result.publish_date}}</li>
+                            <li>Views: {{result.views}}</li>
+                            <li>Likes: {{result.likes}}</li>
+                        </ul>
+                    </p>
+                </div>
             </div>
+            <br/>
+            {% endfor %}
             
-            <button class="btn btn-primary" type="submit" name="submit">Search</button>
-        </form>
-    </div>
-    <div>
-        {% if result_list %}
-            <h2>Results</h2>
-            
-            <div class="list-group">
-                {% for result in result_list %}
-                    <div class="list-group-item">
-                        <h3 class="list-group-item-heading">
-                            <a href="{{ result.link }}">{{ result.title|safe|escape }}</a>
-                        </h3>
-                        <p class="list-group-item-text">{{ result.summary|safe|escape }}</p>
-                    </div>
-                {% endfor %}
-            </div>
+        {% else %}
+            <h2>You didn't search for anything...</h2>
         {% endif %}
     </div>
 {% endblock %}

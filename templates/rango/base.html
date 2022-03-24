@@ -48,6 +48,20 @@
                         {% endif %}
                     </ul>
                 </div>
+                
+                <div class="collapse navbar-collapse " id="navbarNavDarkDropdown">
+                    <ul class="navbar-nav">
+                        <form class="d-flex" method=POST action="{% url 'rango:search' %}">
+                            {% csrf_token %}
+                            
+                            <div class="form-group">
+                                <input class="form-control" type="text" size="25" name="query" value="{{ query }}" id="query" />
+                            </div>
+                            
+                            <button class="btn btn-outline-secondary" type="submit" name="submit">Search</button>
+                        </form>
+                    </ul>
+                </div>
 
                 <div class="collapse navbar-collapse " id="navbarNavDarkDropdown">
                     <ul class="navbar-nav">
