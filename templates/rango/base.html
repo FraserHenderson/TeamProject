@@ -2,7 +2,7 @@
 {% load staticfiles %}
 {% load rango_template_tags %}
 <html lang="en">
-    <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
@@ -19,29 +19,29 @@
     
     <!-- Custom styles for this template -->
     <link href="https://getbootstrap.com/docs/4.2/examples/dashboard/dashboard.css" rel="stylesheet">
-    </head>
-    
-    <body>
-        <header>
-            <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark p-0">
-                <a class="navbar-brand p-2" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
-                    Team 5B</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+</head>
 
-                <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item"><a class="nav-link" href="{% url 'rango:index' %}">Home</a></li>
-                        <li class="nav-item "><a class="nav-link" href="{% url 'rango:about' %}">About Us</a></li>
-                        {% if user.is_authenticated %}
-                   
-                        <li class="nav-item"><a class="nav-link" href="{% url 'rango:add_category' %}">New Category Request</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'rango:profile' user.username %}">Profile</a></li>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark p-0">
+            <a class="navbar-brand p-2" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
+            Team 5B</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-                        <li class="nav-item"><a class="nav-link" href="{% url 'rango:profile' user.username %}">My Collection</a></li>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'rango:index' %}">Home</a></li>
+                    <li class="nav-item "><a class="nav-link" href="{% url 'rango:about' %}">About Us</a></li>
+                    {% if user.is_authenticated %}
 
-                        <li class="nav-item"><a class="nav-link" href="{% url 'rango:new_post' user.username %}">Create New Post</a>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'rango:add_category' %}">New Category Request</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'rango:profile' user.username %}">Profile</a></li>
+
+                    <li class="nav-item"><a class="nav-link" href="{% url 'rango:profile' user.username %}">My Collection</a></li>
+
+                    <li class="nav-item"><a class="nav-link" href="{% url 'rango:new_post' user.username %}">Create New Post</a>
 
                         <li class="nav-item"><a class="nav-link" href="{% url 'rango:add_category' %}">List of Category Requests</a></li>
                         {% else %}
@@ -59,8 +59,8 @@
                         <ul class="dropdown-menu dropdown-menu-dark bg-dark" aria-labelledby="navbarDarkDropdownMenuLink">
                           <li><a class="dropdown-item" href="{% url 'auth_password_change' %}">Change Password</a></li>
                           <li><a class="dropdown-item" href="{% url 'auth_logout' %}?next=/rango/">Logout</a></li>
-                        {% else %}
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          {% else %}
+                          <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Sign In
                         </a>
                         <div class="dropdown-menu">
@@ -70,91 +70,85 @@
                               <label for="inputUsername" class=" form-label ">Username</label>
                               <input type="text" name="username" id="id_username" class="form-control"
                               placeholder="Username" required autofocus>
-                            </div>
-                            <div class="mb-3">
+                          </div>
+                          <div class="mb-3">
                               <label for="inputPassword" class="form-label">Password</label>
                               <input type="password" name="password" id="id_password" class="form-control"
                               placeholder="Password" required>
-                            </div>
-                            <div class="mb-3">
+                          </div>
+                          <div class="mb-3">
                               <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="dropdownCheck">
                                 <label class="form-check-label" for="dropdownCheck">
                                   Remember me
-                                </label>
-                              </div>
-                            </div>
-                            <button class="btn btn-lg btn-dark btn-block" type="submit"
-                            value="Submit">Sign in</button>
-                          </form>
-                          <div class="dropdown-divider"></div>
-                          <a class="dropdown-item" href="{% url 'registration_register' %}">New around here? Sign up</a>
-                        </div>
-                        
-                        {% endif %}
-                        </ul>
-                      </li>
-                    </ul>
-                  </div>
-            </nav>
-        </header>
-        
-        <div class="container-fluid">
-            <div class="row">
-               <nav class="col-md-1 d-none d-md-block bg-light sidebar">
-                <div class="sidebar-sticky">
-                  {% block sidebar_block %}
-                  {% for category in media_categories %}
-                  <li class="list-group-item">
-                       {{ category.name }}
-                       </li>
-                   {% endfor %}
-                   {% endblock %}
-                </div>
-              </nav>
-                <main role="main" class="col-md-9  ml-sm-auto col-lg-10 px-4">		
-                    {% block body_block %}{% endblock %}
-                    
-                    <!-- FOOTER -->
-                    <footer>
-                        <p class="float-right"><a href="#">Back to top</a></p>
-                        <p>&copy; Project By Team 5B &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
-                    </footer>
-                </main>
-            </div>
-        </div>
-        <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-            <div class="offcanvas-header">
-              <h3 class="offcanvas-title" id="offcanvasExampleLabel">Rango</h3>
-              <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body">
-              <div>
-                there are some categories
+                              </label>
+                          </div>
+                      </div>
+                      <button class="btn btn-lg btn-dark btn-block" type="submit"
+                      value="Submit">Sign in</button>
+                  </form>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="{% url 'registration_register' %}">New around here? Sign up</a>
               </div>
-              <nav class="col-md-25 d-none d-md-block bg-light ">  
 
-                <div class="sidebar-sticky">
-                    {% block sidebar_block_one %}
-                       {% for category in media_categories %}
-                       <li class="list-group-item">
-                            {{ category.name }}
-                            </li>
-                        {% endfor %}
-                    {% endblock %}
-                    </div>
-              </nav>
+              {% endif %}
+          </ul>
+      </li>
+  </ul>
+</div>
+</nav>
+</header>
 
-            </div>
-          </div>
-        <!-- Bootstrap core JavaScript -->
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-1 d-none d-md-block bg-light sidebar">
+            <div class="sidebar-sticky">
+                {% block sidebar_block %} {% endblock %}
+         </div>
+     </nav>
 
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-        <script>window.jQuery || document.write('<script src="https://getbootstrap.com/docs/4.2/assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
-        <script src="https://getbootstrap.com/docs/4.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-zDnhMsjVZfS3hiP7oCBRmfjkQC4fzxVxFhBx8Hkz2aZX8gEvA/jsP3eXRCvzTofP" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
-        <script src="https://getbootstrap.com/docs/4.2/examples/dashboard/dashboard.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-    </body>
+     <main role="main" class="col-md-9  ml-sm-auto col-lg-10 px-4">		
+        {% block body_block %}{% endblock %}
+
+        <!-- FOOTER -->
+        <footer>
+            <p class="float-right"><a href="#">Back to top</a></p>
+            <p>&copy; Project By Team 5B &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+        </footer>
+    </main>
+</div>
+</div>
+{% block sidebar_block_one %}
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas-header">
+      <h3 class="offcanvas-title" id="offcanvasExampleLabel">Other Users</h3>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+
+    <nav class="col-md-25 d-none d-md-block bg-light ">  
+
+        <div class="sidebar-sticky">
+            
+{% for user in users %}
+<li class="list-group-item">
+  {{ user.name }}
+</li>
+{% endfor %}
+        </div>
+    </nav>
+
+</div>
+</div>
+{% endblock %}
+<!-- Bootstrap core JavaScript -->
+
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script>window.jQuery || document.write('<script src="https://getbootstrap.com/docs/4.2/assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+    <script src="https://getbootstrap.com/docs/4.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-zDnhMsjVZfS3hiP7oCBRmfjkQC4fzxVxFhBx8Hkz2aZX8gEvA/jsP3eXRCvzTofP" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
+    <script src="https://getbootstrap.com/docs/4.2/examples/dashboard/dashboard.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+</body>
 </html>

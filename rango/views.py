@@ -32,42 +32,13 @@ class IndexView(View):
 
 class AboutView(View):
     def get(self, request):
-        
-        return render(request, 'rango/about.html')
+        users_list = UserEntity.objects.order_by('name')
 
-class ShowCategoryView(View):
-    def create_context_dict(self, category_name_slug):
-        """
-        A helper method that was created to demonstrate the power of class-based views.
-        You can reuse this method in the get() and post() methods!
-        """
         context_dict = {}
-        
-        try:
-            category = Category.objects.get(slug=category_name_slug)
-            pages = Page.objects.filter(category=category).order_by('-views')
-        
-            context_dict['pages'] = pages
-            context_dict['category'] = category
-        except Category.DoesNotExist:
-            context_dict['category'] = None
-            context_dict['pages'] = None
-        
-        return context_dict
-    
-    def get(self, request, category_name_slug):
-        context_dict = self.create_context_dict(category_name_slug)
-        return render(request, 'rango/category.html', context_dict)
-    
-    def post(self, request, category_name_slug):
-        context_dict = self.create_context_dict(category_name_slug)
-        query = request.POST['query'].strip()
-        
-        if query:
-            context_dict['result_list'] = run_query(query)
-            context_dict['query'] = query
-        
-        return render(request, 'rango/category.html', context_dict)
+        context_dict['users'] = users_list
+
+        return render(request, 'rango/about.html', context_dict)
+
 
 class AddCategoryView(View):
     @method_decorator(login_required)
@@ -88,49 +59,6 @@ class AddCategoryView(View):
         
         return render(request, 'rango/add_category.html', {'form': form})
 
-class AddPageView(View):
-    def get_category_name(self, category_name_slug):
-        """
-        A helper method that was created to demonstrate the power of class-based views.
-        You can reuse this method in the get() and post() methods!
-        """
-        try:
-            category = Category.objects.get(slug=category_name_slug)
-        except Category.DoesNotExist:
-            category = None
-        
-        return category
-    
-    @method_decorator(login_required)
-    def get(self, request, category_name_slug):
-        form = PageForm()
-        category = self.get_category_name(category_name_slug)
-        context_dict = {'form': form, 'category': category}
-        return render(request, 'rango/add_page.html', context_dict)
-    
-    @method_decorator(login_required)
-    def post(self, request, category_name_slug):
-        form = PageForm(request.POST)
-        category = self.get_category_name(category_name_slug)
-        
-        if form.is_valid():
-            if category:
-                page = form.save(commit=False)
-                page.category = category
-                page.views = 0
-                page.save()
-                
-                return HttpResponseRedirect(reverse('rango:show_category', kwargs={'category_name_slug':category_name_slug}))
-        else:
-            print(form.errors)
-        
-        context_dict = {'form': form, 'category': category}
-        return render(request, 'rango/add_page.html', context_dict)
-
-class RestrictedView(View):
-    @method_decorator(login_required)
-    def get(self, request):
-        return render(request, 'rango/restricted.html')
 
 def get_server_side_cookie(request, cookie, default_val=None):
     val = request.session.get(cookie)
@@ -183,7 +111,14 @@ class RegisterProfileView(View):
             user_profile = form.save(commit=False)
             user_profile.user = request.user
             user_profile.save()
-            
+
+            u = UserEntity.objects.get_or_create(name=request.user.username)[0]
+            u.name = request.user.username
+            #u.profile_picture = profile_picture
+            u.profile_picture = form['picture'].value()
+            u.login_status = False
+            u.save()
+
             return redirect('rango:index')
         else:
             print(form.errors)
@@ -211,9 +146,12 @@ class ProfileView(View):
         except TypeError:
             return redirect('rango:index')
         
+        users_list = UserEntity.objects.order_by('name')
+        
         context_dict = {'userprofile': userprofile,
-                        'selecteduser': user,
-                        'form': form}
+                            'selecteduser': user,
+                            'form': form}
+        context_dict['users'] = users_list
         
         return render(request, 'rango/profile.html', context_dict)
     
@@ -226,16 +164,21 @@ class ProfileView(View):
         
         if user == request.user:  # Added for authentication exercise.
             form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
-        
+
             if form.is_valid():
-                form.save(commit=True)
+
+                form.save(commit=True) 
+
                 return redirect('rango:profile', user.username)
             else:
                 print(form.errors)
         
+            users_list = UserEntity.objects.order_by('name')
+        
             context_dict = {'userprofile': userprofile,
                             'selecteduser': user,
                             'form': form}
+            context_dict['users'] = users_list
         
         return render(request, 'rango/profile.html', context_dict)
 
@@ -261,13 +204,16 @@ class MediumView(View):
             return redirect('rango:index')
         
         category_list = MediaCategory.objects.order_by('name')
-        context_dict = {'form' : form, 'user': user, 'userprofile': userprofile, 'category_list' : category_list}
+        users_list = UserEntity.objects.order_by('name')
         
+        context_dict = {'form' : form, 'user': user, 'userprofile': userprofile, 'category_list' : category_list}
+        context_dict['users'] = users_list
 
         return render(request, 'rango/new_post.html', context_dict)
     
     @method_decorator(login_required)
     def post(self, request, username):
+        context_dict = {}
         try:
             (user, userprofile) = self.get_user_details(username)
         except TypeError:
@@ -275,11 +221,12 @@ class MediumView(View):
         
         if user == request.user:  # Added for authentication exercise.
             form = MediumForm(request.POST, request.FILES, instance=userprofile)
+            context_dict['form'] = form
         
             if form.is_valid():
                 medium = form.save(commit=False)
-                medium.medium_author = user
-                #medium.medium_category = MediaCategory.objects.get(name=<insert the variable modified by dropdown menu>)
+                medium.medium_author = UserEntity.objects.get(name=user.username)
+                #medium.medium_category = MediaCategory.objects.get(name=request.dropdown)
                 medium.likes = 0
                 medium.views = 0
                 medium.publish_date = datetime.strptime((str(datetime.now()))[:19], '%Y-%m-%d %H:%M:%S')
@@ -289,20 +236,29 @@ class MediumView(View):
             else:
                 print(form.errors)
         
-            context_dict = {'form' : form, 'user': user, 'userprofile': userprofile}
+
+        users_list = UserEntity.objects.order_by('name')
+
+        context_dict = {'user': user, 'userprofile': userprofile}
+        context_dict['users'] = users_list
         
         return render(request, 'rango/new_post.html', context_dict)
 
 
+class MyCollectionView(View):
+    def get(self, request):
+        posts_list = Medium.objects.filter(medium_author = user).order_by('-publish_date')
+        users_list = UserEntity.objects.order_by('name')
+        media_categories_list = MediaCategory.objects.order_by('name')
+    
+        context_dict = {}
+        context_dict['posts'] = posts_list
+        context_dict['media_categories'] = media_categories_list
+        context_dict['users'] = users_list
 
-##def search(request):
-##    result_list = []
-##    query = ''
-##    
-##    if request.method == 'POST':
-##        query = request.POST['query'].strip()
-##        
-##        if query:
-##            result_list = run_query(query)
-##    
-##    return render(request, 'rango/search.html', {'result_list': result_list, 'query': query})
+    
+        visitor_cookie_handler(request)
+    
+        response = render(request, 'rango/index.html', context_dict)
+    
+        return response

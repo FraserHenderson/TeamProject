@@ -116,3 +116,12 @@ Homepage
 
 </div>
 {% endblock %}
+
+
+{% block sidebar_block %}
+              {% for category in media_categories %}
+              <li class="list-group-item">
+                 {{ category.name }}
+             </li>
+             {% endfor %}
+             {% endblock %}
