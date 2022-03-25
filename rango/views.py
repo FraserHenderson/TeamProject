@@ -244,8 +244,9 @@ class MediumView(View):
 
 class MyCollectionView(View):
     def get(self, request, username):
-        #posts_list = Medium.objects.filter(medium_author = username).order_by('-publish_date')
-        posts_list = Medium.objects.order_by('-publish_date')
+        target_user = UserEntity.objects.get(name = username)
+        posts_list = Medium.objects.filter(medium_author = target_user).order_by('-publish_date')
+        #posts_list = Medium.objects.order_by('-publish_date')
         users_list = UserEntity.objects.order_by('name')
         media_categories_list = MediaCategory.objects.order_by('name')
     
@@ -253,6 +254,7 @@ class MyCollectionView(View):
         context_dict['posts'] = posts_list
         context_dict['media_categories'] = media_categories_list
         context_dict['users'] = users_list
+        context_dict['target_user'] = target_user
 
     
         visitor_cookie_handler(request)
