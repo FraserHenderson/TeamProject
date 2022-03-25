@@ -187,6 +187,11 @@ class ProfileView(View):
         
             if form.is_valid():
                 form.save(commit=True)
+
+                user_entity = UserEntity.objects.get(name=user.username)
+                user_entity.profile_picture = form['picture'].value()
+                user_entity.save()
+
                 return redirect('rango:profile', user.username)
             else:
                 print(form.errors)
