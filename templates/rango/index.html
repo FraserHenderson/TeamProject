@@ -92,11 +92,8 @@ Homepage
 <p class="card-text">
 {% if users %}
 <ul class="list-group">
-{% for user in users %}
-<li class="list-group-item">
- <!--<a href="{{ page.url }}">{{ page.title }}</a> -->
- {{ user.name }}
-</li>
+{% for target_user in users %}
+<li class="nav-item "><a class="nav-link" href="{% url 'rango:my_collection' target_user.name %}">{{ target_user.name }}</a></li>
 {% endfor %}
 </ul>
 {% else %}
