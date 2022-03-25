@@ -46,13 +46,19 @@ class AboutView(View):
 
 class AddCategoryRequestView(View):
     @method_decorator(login_required)
-    def get(self, request):
-        form = CategoryRequestForm()
+    def get(self, request, username):
+        ensure_that_corresponding_UserEntity_exists(username)
 
-        return render(request, 'rango/add_category.html', {'form': form})
+        form = CategoryRequestForm()
+        context_dict = {}
+        context_dict['form'] = form
+
+        return render(request, 'rango/add_category.html', context_dict)
     
     @method_decorator(login_required)
-    def post(self, request):
+    def post(self, request, username):
+        ensure_that_corresponding_UserEntity_exists(username)
+
         form = CategoryRequestForm(request.POST)
         
         if form.is_valid():
@@ -60,12 +66,17 @@ class AddCategoryRequestView(View):
             return redirect('rango:index')
         else:
             print(form.errors)
+
+        context_dict = {}
+        context_dict['form'] = form
         
-        return render(request, 'rango/add_category.html', {'form': form})
+        return render(request, 'rango/add_category.html', context_dict)
 
 class ShowCategoryRequestsView(View):
     @method_decorator(login_required)
-    def get(self, request):
+    def get(self, request, username):
+        ensure_that_corresponding_UserEntity_exists(username)
+
         pending_categories_list = MediaCategory.objects.filter(approved=False).order_by('name')
 
         context_dict = {}
@@ -74,35 +85,15 @@ class ShowCategoryRequestsView(View):
         return render(request, 'rango/category_requests.html', context_dict)
 
     @method_decorator(login_required)
-    def post(self, request):
+    def post(self, request, username):
+        ensure_that_corresponding_UserEntity_exists(username)
+
         approved_category_name = request.POST['dropdown']
         approved_category = MediaCategory.objects.get(name=approved_category_name)
         approved_category.approved = True
         approved_category.save()
 
         return redirect('rango:index')
-
-def get_server_side_cookie(request, cookie, default_val=None):
-    val = request.session.get(cookie)
-    
-    if not val:
-        val = default_val
-    
-    return val
-
-def visitor_cookie_handler(request):
-    visits = int(get_server_side_cookie(request, 'visits', '1'))
-    
-    last_visit_cookie = get_server_side_cookie(request, 'last_visit', str(datetime.now()))
-    last_visit_time = datetime.strptime(last_visit_cookie[:-7], '%Y-%m-%d %H:%M:%S')
-    
-    if (datetime.now() - last_visit_time).days > 0:
-        visits = visits + 1
-        request.session['last_visit'] = str(datetime.now())
-    else:
-        request.session['last_visit'] = last_visit_cookie
-    
-    request.session['visits'] = visits
 
 class GotoView(View):
     def get(self, request):
@@ -122,7 +113,8 @@ class RegisterProfileView(View):
     @method_decorator(login_required)
     def get(self, request):
         form = UserProfileForm()
-        context_dict = {'form': form}
+        context_dict = {}
+        context_dict['form'] = form
         return render(request, 'rango/profile_registration.html', context_dict)
     
     @method_decorator(login_required)
@@ -143,7 +135,8 @@ class RegisterProfileView(View):
         else:
             print(form.errors)
         
-        context_dict = {'form': form}
+        context_dict = {}
+        context_dict['form'] = form
         return render(request, 'rango/profile_registration.html', context_dict)
 
 class ProfileView(View):
@@ -164,16 +157,16 @@ class ProfileView(View):
     def get(self, request, username):
         try:
             (user, userprofile, form, posts, users_list) = self.get_user_details(username)
+            ensure_that_corresponding_UserEntity_exists(username)
         except TypeError:
             return redirect('rango:index')
-
-        ensure_that_corresponding_UserEntity_exists(username)
         
-        context_dict = {'userprofile': userprofile,
-                        'selecteduser': user,
-                        'form': form,
-                        'posts': posts,
-                        'users_list': users_list}
+        context_dict = {}
+        context_dict['userprofile'] = userprofile
+        context_dict['selecteduser'] = user
+        context_dict['form'] = form
+        context_dict['posts'] = posts
+        context_dict['users_list'] = users_list
         
         return render(request, 'rango/profile.html', context_dict)
     
@@ -181,10 +174,9 @@ class ProfileView(View):
     def post(self, request, username):
         try:
             (user, userprofile, form, posts, users_list) = self.get_user_details(username)
+            ensure_that_corresponding_UserEntity_exists(username)
         except TypeError:
             return redirect('rango:index')
-
-        ensure_that_corresponding_UserEntity_exists(username)
         
         if user == request.user:  # Added for authentication exercise.
             form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
@@ -200,55 +192,43 @@ class ProfileView(View):
             else:
                 print(form.errors)
         
-            context_dict = {'userprofile': userprofile,
-                            'selecteduser': user,
-                            'form': form,
-                            'posts': posts,
-                            'users_list': users_list}
+            context_dict = {}
+            context_dict['userprofile'] = userprofile
+            context_dict['selecteduser'] = user
+            context_dict['form'] = form
+            context_dict['posts'] = posts
+            context_dict['users_list'] = users_list
         
         return render(request, 'rango/profile.html', context_dict)
 
 class MediumView(View):
-    def get_user_details(self, username):
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return None
-        
-        userprofile = UserProfile.objects.get_or_create(user=user)[0]
-        
-        return (user, userprofile)
     
     @method_decorator(login_required)
     def get(self, request, username):
         try:
-            (user, userprofile) = self.get_user_details(username)
+            user = get_user(username)
             form = MediumForm()
         except TypeError:
             return redirect('rango:index')
-
-        ensure_that_corresponding_UserEntity_exists(username)
         
         category_list = MediaCategory.objects.filter(approved=True).order_by('name')
         users_list = UserEntity.objects.order_by('name')
         
-        context_dict = {'form' : form, 'user': user, 'userprofile': userprofile, 'category_list' : category_list}
+        context_dict = {}
+        context_dict['user'] = user
         context_dict['users'] = users_list
+        context_dict['form'] = form
+        context_dict['category_list'] = category_list
 
         return render(request, 'rango/new_post.html', context_dict)
     
     @method_decorator(login_required)
     def post(self, request, username):
-        context_dict = {}
         try:
-            (user, userprofile) = self.get_user_details(username)
+            user = get_user(username)
+            form = MediumForm(request.POST, request.FILES)
         except TypeError:
             return redirect('rango:index')
-        
-        ensure_that_corresponding_UserEntity_exists(username)
-
-        form = MediumForm(request.POST, request.FILES)
-        context_dict['form'] = form
         
         if form.is_valid():
             medium = form.save(commit=False)
@@ -259,15 +239,17 @@ class MediumView(View):
             medium.publish_date = datetime.strptime((str(datetime.now()))[:19], '%Y-%m-%d %H:%M:%S')
             medium.save()
                 
-            return redirect('rango:profile', user.username)
+            return redirect('rango:my_collection', user.username)
         else:
             print(form.errors)
         
 
         users_list = UserEntity.objects.order_by('name')
 
-        context_dict = {'user': user, 'userprofile': userprofile}
+        context_dict = {}
+        context_dict['user'] = user
         context_dict['users'] = users_list
+        context_dict['form'] = form
         
         return render(request, 'rango/new_post.html', context_dict)
 
@@ -304,6 +286,18 @@ def search(request):
     else:
         return render(request, 'rango/search.html', {})
 
+
+def get_user(username):
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return None
+    
+    userprofile = UserProfile.objects.get_or_create(user=user)[0]
+    ensure_that_corresponding_UserEntity_exists(username)
+    
+    return user
+
 def ensure_that_corresponding_UserEntity_exists(username):
     # Since behind the scenes Users can be created by other means (admin interface or command line "createsuperuser"), there are two possible fixes to do
     # this makes sure that the corresponding UserEntity exists in the database
@@ -315,3 +309,25 @@ def ensure_that_corresponding_UserEntity_exists(username):
         user_entity.profile_picture = userprofile.picture
         logger.warning(user_entity.profile_picture)
         user_entity.save()
+
+def get_server_side_cookie(request, cookie, default_val=None):
+    val = request.session.get(cookie)
+    
+    if not val:
+        val = default_val
+    
+    return val
+
+def visitor_cookie_handler(request):
+    visits = int(get_server_side_cookie(request, 'visits', '1'))
+    
+    last_visit_cookie = get_server_side_cookie(request, 'last_visit', str(datetime.now()))
+    last_visit_time = datetime.strptime(last_visit_cookie[:-7], '%Y-%m-%d %H:%M:%S')
+    
+    if (datetime.now() - last_visit_time).days > 0:
+        visits = visits + 1
+        request.session['last_visit'] = str(datetime.now())
+    else:
+        request.session['last_visit'] = last_visit_cookie
+    
+    request.session['visits'] = visits
