@@ -166,6 +166,8 @@ class ProfileView(View):
             (user, userprofile, form, posts, users_list) = self.get_user_details(username)
         except TypeError:
             return redirect('rango:index')
+
+        ensure_that_corresponding_UserEntity_exists(username)
         
         context_dict = {'userprofile': userprofile,
                         'selecteduser': user,
@@ -181,6 +183,8 @@ class ProfileView(View):
             (user, userprofile, form, posts, users_list) = self.get_user_details(username)
         except TypeError:
             return redirect('rango:index')
+
+        ensure_that_corresponding_UserEntity_exists(username)
         
         if user == request.user:  # Added for authentication exercise.
             form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
@@ -222,6 +226,8 @@ class MediumView(View):
             form = MediumForm()
         except TypeError:
             return redirect('rango:index')
+
+        ensure_that_corresponding_UserEntity_exists(username)
         
         category_list = MediaCategory.objects.filter(approved=True).order_by('name')
         users_list = UserEntity.objects.order_by('name')
@@ -239,6 +245,7 @@ class MediumView(View):
         except TypeError:
             return redirect('rango:index')
         
+        ensure_that_corresponding_UserEntity_exists(username)
 
         form = MediumForm(request.POST, request.FILES)
         context_dict['form'] = form
@@ -267,7 +274,9 @@ class MediumView(View):
 
 class MyCollectionView(View):
     def get(self, request, username):
-        target_user = UserEntity.objects.get(name = username)
+        ensure_that_corresponding_UserEntity_exists(username)
+
+        target_user = UserEntity.objects.get(name=username)
         posts_list = Medium.objects.filter(medium_author=target_user).order_by('-publish_date')
         users_list = UserEntity.objects.order_by('name')
         media_categories_list = MediaCategory.objects.filter(approved=True).order_by('name')
@@ -294,3 +303,15 @@ def search(request):
         return render(request, 'rango/search.html', {'query': query, 'results': results})
     else:
         return render(request, 'rango/search.html', {})
+
+def ensure_that_corresponding_UserEntity_exists(username):
+    # Since behind the scenes Users can be created by other means (admin interface or command line "createsuperuser"), there are two possible fixes to do
+    # this makes sure that the corresponding UserEntity exists in the database
+    user_entity, created = UserEntity.objects.get_or_create(name=username)
+    if created is True:
+        user = User.objects.get(username=username)
+        userprofile = UserProfile.objects.get(user=user)
+        logger.warning(userprofile.picture)
+        user_entity.profile_picture = userprofile.picture
+        logger.warning(user_entity.profile_picture)
+        user_entity.save()
