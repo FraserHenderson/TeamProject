@@ -21,12 +21,12 @@ Homepage
       <div class="carousel-item active">
         <img src="{% static 'images/team5b.png' %}" class="d-block w-100" alt="...">
         <div class="carousel-caption d-none d-md-block">
-          <h2>Welcome!</h2>
           <p><h5>{% if user.is_authenticated %}
-            Welcome back!{{ user.username }}!
+            Welcome back, {{ user.username }}!
             {% else %}
             {% endif %}
-            enjoy in this website.</h5></p>
+            <br>
+            Enjoy in this website.</h5></p>
         </div>
       </div>
       <div class="carousel-item">

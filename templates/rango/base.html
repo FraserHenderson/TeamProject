@@ -25,7 +25,7 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark p-0">
             <a class="navbar-brand p-2" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
-            Team 5B</a>
+            Fellow Collectors</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -37,15 +37,18 @@
                     {% if user.is_authenticated %}
 
                     <li class="nav-item"><a class="nav-link" href="{% url 'rango:add_category' %}">New Category Request</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'rango:profile' user.username %}">Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'rango:profile' user.username %}">My Profile</a></li>
 
                     <li class="nav-item"><a class="nav-link" href="{% url 'rango:my_collection' user.username %}">My Collection</a></li>
 
                     <li class="nav-item"><a class="nav-link" href="{% url 'rango:new_post' user.username %}">Create New Post</a>
 
-                        <li class="nav-item"><a class="nav-link" href="{% url 'rango:view_category_requests' %}">List of Category Requests</a></li>
-                        {% else %}
-                        {% endif %}
+                    {% endif %}
+
+                    {% if user.is_superuser %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'rango:view_category_requests' %}">List of Category Requests</a></li>
+                    {% endif %}
+
                     </ul>
                 </div>
                 
@@ -135,7 +138,7 @@
 {% block sidebar_block_one %}
 <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
     <div class="offcanvas-header">
-      <h3 class="offcanvas-title" id="offcanvasExampleLabel">Other Users</h3>
+      <h3 class="offcanvas-title" id="offcanvasExampleLabel">Fellow Collectors</h3>
       <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body">
