@@ -200,7 +200,7 @@ class MediumView(View):
         except TypeError:
             return redirect('rango:index')
         
-        category_list = MediaCategory.objects.order_by('name')
+        category_list = MediaCategory.objects.filter(approved=True).order_by('name')
         users_list = UserEntity.objects.order_by('name')
         
         context_dict = {'form' : form, 'user': user, 'userprofile': userprofile, 'category_list' : category_list}
@@ -245,8 +245,7 @@ class MediumView(View):
 class MyCollectionView(View):
     def get(self, request, username):
         target_user = UserEntity.objects.get(name = username)
-        posts_list = Medium.objects.filter(medium_author = target_user).order_by('-publish_date')
-        #posts_list = Medium.objects.order_by('-publish_date')
+        posts_list = Medium.objects.filter(medium_author=target_user).order_by('-publish_date')
         users_list = UserEntity.objects.order_by('name')
         media_categories_list = MediaCategory.objects.order_by('name')
     

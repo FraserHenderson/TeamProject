@@ -21,6 +21,7 @@ class UserEntity(models.Model):
 
 class MediaCategory(models.Model):
     name = models.CharField(max_length=50, unique=True)
+    approved = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = 'Media Categories'

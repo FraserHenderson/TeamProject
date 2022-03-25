@@ -29,10 +29,14 @@ def populate():
     ]
 
     categories = [
-        {'name': 'Flower'},
-        {'name': 'Landscape'},
-        {'name': 'Rodent'},
-        {'name': 'Cat'},
+        {'name': 'Flower',
+        'approved': True},
+        {'name': 'Landscape',
+        'approved': True},
+        {'name': 'Rodent',
+        'approved': False},
+        {'name': 'Cat',
+        'approved': True},
     ]
 
     media = [
@@ -102,7 +106,7 @@ def populate():
         add_user(name=user_data['name'], profile_picture=user_data['profile_picture'], login_status=user_data['login_status'], followed_users=user_data['followed_users'])
 
     for category_data in categories:
-        add_category(name=category_data['name'])
+        add_category(name=category_data['name'], approved=category_data['approved'])
 
     for medium_data in media:
         add_medium(name=medium_data['name'], description=medium_data['description'], thumbnail=medium_data['thumbnail'], publish_date=medium_data['publish_date'], views=medium_data['views'], likes=medium_data['likes'], medium_author=medium_data['medium_author'], medium_category=medium_data['medium_category'])
@@ -127,9 +131,10 @@ def add_user(name, profile_picture=None, login_status=False, followed_users=[]):
     u.save()
     return u
 
-def add_category(name):
+def add_category(name, approved=False):
     c = MediaCategory.objects.get_or_create(name=name)[0]
     c.name = name
+    c.approved = approved
     c.save()
     return c
 
