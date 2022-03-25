@@ -28,7 +28,7 @@ class IndexView(View):
         context_dict['media_categories'] = media_categories_list
         context_dict['users'] = users_list
     
-        visitor_cookie_handler(request)
+        #visitor_cookie_handler(request)
     
         response = render(request, 'rango/index.html', context_dict)
     
@@ -257,7 +257,7 @@ class MyCollectionView(View):
         context_dict['target_user'] = target_user
 
     
-        visitor_cookie_handler(request)
+        #visitor_cookie_handler(request)
     
         response = render(request, 'rango/my_collection.html', context_dict)
     
