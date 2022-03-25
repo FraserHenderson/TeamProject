@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from rango.models import Medium, MediaCategory, UserEntity
-from rango.forms import UserForm, UserProfileForm, MediumForm
+from rango.forms import UserForm, UserProfileForm,CategoryRequestForm , MediumForm
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
@@ -21,7 +21,7 @@ class IndexView(View):
     def get(self, request):
         posts_list = Medium.objects.order_by('-publish_date')[:5]
         users_list = UserEntity.objects.order_by('name')
-        media_categories_list = MediaCategory.objects.order_by('name')
+        media_categories_list = MediaCategory.objects.filter(approved=True).order_by('name')
     
         context_dict = {}
         context_dict['posts'] = posts_list
@@ -44,25 +44,43 @@ class AboutView(View):
         return render(request, 'rango/about.html', context_dict)
 
 
-class AddCategoryView(View):
+class AddCategoryRequestView(View):
     @method_decorator(login_required)
     def get(self, request):
-        #form = CategoryForm()
-        form = None;
+        form = CategoryRequestForm()
+
         return render(request, 'rango/add_category.html', {'form': form})
     
     @method_decorator(login_required)
     def post(self, request):
-        form = CategoryForm(request.POST)
+        form = CategoryRequestForm(request.POST)
         
         if form.is_valid():
             form.save(commit=True)
-            return IndexView(request)
+            return redirect('rango:index')
         else:
             print(form.errors)
         
         return render(request, 'rango/add_category.html', {'form': form})
 
+class ShowCategoryRequestsView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        pending_categories_list = MediaCategory.objects.filter(approved=False).order_by('name')
+
+        context_dict = {}
+        context_dict['pending_categories'] = pending_categories_list
+
+        return render(request, 'rango/category_requests.html', context_dict)
+
+    @method_decorator(login_required)
+    def post(self, request):
+        approved_category_name = request.POST['dropdown']
+        approved_category = MediaCategory.objects.get(name=approved_category_name)
+        approved_category.approved = True
+        approved_category.save()
+
+        return redirect('rango:index')
 
 def get_server_side_cookie(request, cookie, default_val=None):
     val = request.session.get(cookie)
@@ -247,7 +265,7 @@ class MyCollectionView(View):
         target_user = UserEntity.objects.get(name = username)
         posts_list = Medium.objects.filter(medium_author=target_user).order_by('-publish_date')
         users_list = UserEntity.objects.order_by('name')
-        media_categories_list = MediaCategory.objects.order_by('name')
+        media_categories_list = MediaCategory.objects.filter(approved=True).order_by('name')
     
         context_dict = {}
         context_dict['posts'] = posts_list

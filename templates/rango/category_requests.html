@@ -1,0 +1,35 @@
+{% extends 'rango/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    Pending Category Requests
+{% endblock %}
+
+{% block body_block %}
+    <div class="jumbotron p-4">
+        <div class="container">
+            <h1 class="jumotron-heading">Pending Category Requests</h1>
+        </div>
+    </div>
+<div class="container">
+        <div class="row">
+            <br />
+            <div>
+                <form method="post" action="." enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="dropdown">
+                              <select name="dropdown">
+                                {% for category in pending_categories %}
+                               <option value = "{{ category.name }}" selected>{{ category.name }}</option>
+                               {% endfor %}
+                           </select>
+                <br><br>
+              </div>
+            </div>
+
+    
+                    
+            <input type="submit" value="Post" />
+            </form>
+
+{% endblock %}
