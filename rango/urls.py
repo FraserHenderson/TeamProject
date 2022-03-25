@@ -19,6 +19,7 @@ urlpatterns = [
     path('goto/', views.GotoView.as_view(), name='goto'),
     path('register_profile/', views.RegisterProfileView.as_view(), name='register_profile'),
     path('new_post/<username>/', views.MediumView.as_view(), name='new_post'),
+    path('my_collection/<username>/', views.MyCollectionView.as_view(), name='my_collection'),
     path('profile/<username>/', views.ProfileView.as_view(), name='profile'),
 
 ]

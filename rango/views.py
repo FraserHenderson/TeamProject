@@ -243,8 +243,9 @@ class MediumView(View):
 
 
 class MyCollectionView(View):
-    def get(self, request):
-        posts_list = Medium.objects.filter(medium_author = user).order_by('-publish_date')
+    def get(self, request, username):
+        #posts_list = Medium.objects.filter(medium_author = username).order_by('-publish_date')
+        posts_list = Medium.objects.order_by('-publish_date')
         users_list = UserEntity.objects.order_by('name')
         media_categories_list = MediaCategory.objects.order_by('name')
     
@@ -256,9 +257,10 @@ class MyCollectionView(View):
     
         visitor_cookie_handler(request)
     
-        response = render(request, 'rango/index.html', context_dict)
+        response = render(request, 'rango/my_collection.html', context_dict)
     
         return response
+
     
 def search(request):
     if request.method == 'POST':

@@ -33,25 +33,6 @@
             </div>
         </div>
         <br/>
-        {% for post in posts %}
-            <div class="card">
-                <div class="card-header">
-                    {{ post }}
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">Author: {{userprofile}}</h5>
-                    <img src={{ MEDIA_URL }}{{post.thumbnail}} alt={{ post }}>
-                    <p class="card-text">
-                        <ul>
-                            <li>Category: {{post.medium_category.name}}</li>
-                            <li>Description: {{post.description}}</li>
-                            <li>Publish Date: {{post.publish_date}}</li>
-                            <li>Views: {{post.views}}</li>
-                            <li>Likes: {{post.likes}}</li>
-                        </ul>
-                    </p>
-                </div>
-            </div>
-            {% endfor %}
+
     </div>
 {% endblock %}
