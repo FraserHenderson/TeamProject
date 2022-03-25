@@ -15,16 +15,13 @@ def populate():
 
     users = [
         {'name': 'Matas',
-        'profile_picture': None,
-        'login_status': False,
+        'profile_picture': 'Blue_rook.jpg',
         'followed_users': []},
         {'name': 'Matt',
-        'profile_picture': None,
-        'login_status': False,
+        'profile_picture': 'White_horse.png',
         'followed_users': ['Matas']},
         {'name': 'Matthew',
-        'profile_picture': None,
-        'login_status': False,
+        'profile_picture': 'Red_pawn.jpg',
         'followed_users': ['Matas']},
     ]
 
@@ -103,7 +100,7 @@ def populate():
    
 
     for user_data in users:
-        add_user(name=user_data['name'], profile_picture=user_data['profile_picture'], login_status=user_data['login_status'], followed_users=user_data['followed_users'])
+        add_user(name=user_data['name'], profile_picture=user_data['profile_picture'], followed_users=user_data['followed_users'])
 
     for category_data in categories:
         add_category(name=category_data['name'], approved=category_data['approved'])
@@ -117,11 +114,10 @@ def populate():
 
 
 
-def add_user(name, profile_picture=None, login_status=False, followed_users=[]):
+def add_user(name, profile_picture='Default_profile_picture.jpg', followed_users=[]):
     u = UserEntity.objects.get_or_create(name=name)[0]
     u.name = name
-    u.profile_picture = profile_picture
-    u.login_status = login_status
+    u.profile_picture.save('profile_picture.png', File(open(os.path.join(settings.MEDIA_DIR, profile_picture), 'rb')))
 
     # Does not work
     # for fu in followed_users:
@@ -145,7 +141,6 @@ def add_medium(name, medium_author, medium_category, description='', thumbnail=N
     m = Medium.objects.get_or_create(name=name, medium_author=author, medium_category=category)[0]
     m.name = name
     m.description = description
-    #m.thumbnail = thumbnail
     m.publish_date = datetime.strptime((str(publish_date))[:19], '%Y-%m-%d %H:%M:%S')
     # Uploading files from file system taken from: https://stackoverflow.com/questions/15332086/saving-image-file-through-django-shell
     m.thumbnail.save('thumbnail.png', File(open(os.path.join(settings.MEDIA_DIR, thumbnail), 'rb')))

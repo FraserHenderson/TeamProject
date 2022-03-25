@@ -10,7 +10,7 @@ from datetime import datetime
 # Named UserEntity instead of User to prevent from clashing with code imported from django.contrib.auth.models
 class UserEntity(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    profile_picture = models.ImageField(blank=True)
+    profile_picture = models.ImageField(default='Default_profile_picture.jpg')
     followed_users = models.ManyToManyField("self", symmetrical=False, blank=True)
 
     class Meta:
@@ -58,7 +58,7 @@ class Review(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    picture = models.ImageField(upload_to='profile_images', blank=True)
+    picture = models.ImageField(default='Default_profile_picture.jpg')
 
     def __str__(self):
         return self.user.username
