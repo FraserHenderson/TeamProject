@@ -18,24 +18,23 @@ Collection for {{ target_user.name }}
 
 <div>
     {% for post in posts %}
+    <br/>
     <div class="card">
         <div class="card-header">
-            {{ post }}
+            <strong>{{ post }}</strong>
         </div>
         <div class="card-body">
             <img src={{ MEDIA_URL }}{{post.thumbnail}} alt={{ post }}>
             <p class="card-text">
-                <ul>
-                    <li>Category: {{post.medium_category.name}}</li>
-                    <li>Description: {{post.description}}</li>
-                    <li>Publish Date: {{post.publish_date}}</li>
-                    <li>Views: {{post.views}}</li>
-                    <li>Likes: {{post.likes}}</li>
-                </ul>
+                <strong>Author:</strong> <a href="{% url 'rango:my_collection' post.medium_author.name %}">{{post.medium_author.name}}</a><br/>
+                <strong>Category:</strong> {{post.medium_category.name}}<br/>
+                <strong>Description:</strong> {{post.description}}<br/>
+                <strong>Publish Date:</strong> {{post.publish_date}}<br/>
+                <strong>Views:</strong> {{post.views}}<br/>
+                <strong>Likes:</strong> {{post.likes}}
             </p>
         </div>
     </div>
     {% endfor %}
-
 </div>
 {% endblock %}

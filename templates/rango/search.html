@@ -13,28 +13,26 @@
     </div>
     <div>
         {% if query %}
-            <h2>Results for {{ query }}:</h2>
+            <h2>Results for {{ query }}</h2>
             
             {% for result in results %}
+            <br/>
             <div class="card">
                 <div class="card-header">
-                    Author: {{result.medium_author.name}}
+                    <strong>{{ result }}</strong>
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title">{{ result }}</h5>
                     <img src={{ MEDIA_URL }}{{result.thumbnail}} alt={{ result }}>
                     <p class="card-text">
-                        <ul>
-                            <li>Category: {{result.medium_category.name}}</li>
-                            <li>Description: {{result.description}}</li>
-                            <li>Publish Date: {{result.publish_date}}</li>
-                            <li>Views: {{result.views}}</li>
-                            <li>Likes: {{result.likes}}</li>
-                        </ul>
+                        <strong>Author:</strong> <a href="{% url 'rango:my_collection' result.medium_author.name %}">{{result.medium_author.name}}</a><br/>
+                        <strong>Category:</strong> {{result.medium_category.name}}<br/>
+                        <strong>Description:</strong> {{result.description}}<br/>
+                        <strong>Publish Date:</strong> {{result.publish_date}}<br/>
+                        <strong>Views:</strong> {{result.views}}<br/>
+                        <strong>Likes:</strong> {{result.likes}}
                     </p>
                 </div>
             </div>
-            <br/>
             {% endfor %}
             
         {% else %}
