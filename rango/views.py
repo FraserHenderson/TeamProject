@@ -275,14 +275,39 @@ class MyCollectionView(View):
         response = render(request, 'rango/my_collection.html', context_dict)
     
         return response
-
+    
+class MediaCategoryView(View):
+    def get(self, request, category):
+        target_category = MediaCategory.objects.get(name=category)
+        posts_list = Medium.objects.filter(medium_category=target_category).order_by('-publish_date')
+    
+        context_dict = {}
+        context_dict['target_category'] = target_category
+        context_dict['posts'] = posts_list
+    
+        response = render(request, 'rango/category.html', context_dict)
+    
+        return response
     
 def search(request):
     if request.method == 'POST':
         query = request.POST['query']
-        results = Medium.objects.filter(name__contains=query)
+        search_type = ''
+        results = None
         
-        return render(request, 'rango/search.html', {'query': query, 'results': results})
+        if 'media' in request.POST:
+            search_type = 'media'
+            results = Medium.objects.filter(name__contains=query)
+        if 'category' in request.POST:
+            search_type = 'category'
+            results = MediaCategory.objects.filter(name__contains=query)
+        if 'user' in request.POST:
+            search_type = 'user'
+            results = UserEntity.objects.filter(name__contains=query)
+            
+        print(search_type)
+            
+        return render(request, 'rango/search.html', {'query': query,'search_type': search_type,'results': results})
     else:
         return render(request, 'rango/search.html', {})
 

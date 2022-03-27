@@ -58,7 +58,16 @@
                                 <input class="form-control" type="text" size="25" name="query" value="{{ query }}" id="query" />
                             </div>
                             
-                            <button class="btn btn-outline-secondary" type="submit" name="submit">Search</button>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Search
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <button class="dropdown-item" type="submit" name="media">Media</a>
+                                    <button class="dropdown-item" type="submit" name="category">Category</a>
+                                    <button class="dropdown-item" type="submit" name="user">User</a>
+                                </div>
+                            </div>
                         </form>
                     </ul>
                 </div>

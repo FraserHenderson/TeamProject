@@ -15,25 +15,32 @@
         {% if query %}
             <h2>Results for {{ query }}</h2>
             
-            {% for result in results %}
-            <br/>
-            <div class="card">
-                <div class="card-header">
-                    <strong>{{ result }}</strong>
+            {% if search_type == "media" %}
+                {% for result in results %}
+                <br/>
+                <div class="card">
+                    <div class="card-header">
+                        <strong>{{ result }}</strong>
+                    </div>
+                    <div class="card-body">
+                        <img src={{ MEDIA_URL }}{{result.thumbnail}} alt={{ result }}>
+                        <p class="card-text">
+                            <strong>Author:</strong> <a href="{% url 'rango:my_collection' result.medium_author.name %}">{{result.medium_author.name}}</a><br/>
+                            <strong>Category:</strong> <a href="{% url 'rango:category' result.medium_category.name %}">{{result.medium_category.name}}</a><br/>
+                            <strong>Description:</strong> {{result.description}}<br/>
+                            <strong>Publish Date:</strong> {{result.publish_date}}<br/>
+                            <strong>Views:</strong> {{result.views}}<br/>
+                            <strong>Likes:</strong> {{result.likes}}
+                        </p>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <img src={{ MEDIA_URL }}{{result.thumbnail}} alt={{ result }}>
-                    <p class="card-text">
-                        <strong>Author:</strong> <a href="{% url 'rango:my_collection' result.medium_author.name %}">{{result.medium_author.name}}</a><br/>
-                        <strong>Category:</strong> {{result.medium_category.name}}<br/>
-                        <strong>Description:</strong> {{result.description}}<br/>
-                        <strong>Publish Date:</strong> {{result.publish_date}}<br/>
-                        <strong>Views:</strong> {{result.views}}<br/>
-                        <strong>Likes:</strong> {{result.likes}}
-                    </p>
-                </div>
-            </div>
-            {% endfor %}
+                {% endfor %}
+                
+            {% else %}
+                {% for result in results %}
+                    <a href="{% url 'rango:my_collection' result.name %}">{{result.name}}</a><br/>
+                {% endfor %}
+            {% endif %}
             
         {% else %}
             <h2>You didn't search for anything...</h2>

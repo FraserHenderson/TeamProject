@@ -19,5 +19,6 @@ urlpatterns = [
     path('view_category_requests/<username>/', views.ShowCategoryRequestsView.as_view(), name='view_category_requests'),
 
     path('search/', views.search, name='search'),
-    path('goto/', views.GotoView.as_view(), name='goto'), 
+    path('goto/', views.GotoView.as_view(), name='goto'),
+    path('category/<category>/', views.MediaCategoryView.as_view(), name='category'),
 ]

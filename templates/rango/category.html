@@ -8,11 +8,7 @@ Collection for {{ target_user.name }}
 {% block body_block %}
 <div class="jumbotron p-4">
     <div class="container">
-        <img src={{ MEDIA_URL }}{{ target_user.profile_picture }}
-             height="50"
-             alt="{{ target_user.name }}'s profile image" />
-
-        <h1 class="jumotron-heading">{{ target_user.name }}'s Collection</h1>
+        <h1 class="jumotron-heading">{{ target_category.name }}'s Collection</h1>
     </div>
 </div>
 
