@@ -53,31 +53,107 @@ class AboutViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'rango/about.html')
 
-class AddCategoryTest(TestCase):
+class AddCategoryRequestViewTest(TestCase):
 
     def test_add_category_logged_out(self):
-        response = self.client.get(reverse('rango:add_category'))
+        user = create_user_object()
+        name = user.username
+        response = self.client.get(reverse('rango:add_category',kwargs={'username':name}))
         self.assertEqual(response.status_code, 302)
 
     def test_add_category_logged_in(self):
-        create_user_object()
+        user = create_user_object()
+        name = user.username
+        UserEntity.objects.create(name=name)
         self.client.login(username="testuser", password='123')
-        response = self.client.get(reverse('rango:add_category'))
+        response = self.client.get(reverse('rango:add_category',kwargs={'username':name}))
         self.assertEqual(response.status_code, 200)
 
     def test_view_uses_correct_template(self):
-        create_user_object()
+        user = create_user_object()
+        name = user.username
+        UserEntity.objects.create(name=name)
         self.client.login(username="testuser", password='123')
-        response = self.client.get(reverse('rango:add_category'))
+        response = self.client.get(reverse('rango:add_category',kwargs={'username':name}))
         self.assertTemplateUsed(response, 'rango/add_category.html')
+
+    def test_requesting_invalid_category(self):
+        user = create_user_object()
+        name = user.username
+        UserEntity.objects.create(name=name)
+        self.client.login(username="testuser", password='123')
+
+        response = self.client.post(reverse('rango:add_category', kwargs={'username': name}))
+        requests = MediaCategory.objects.filter(approved=False)
+        self.assertEqual(len(requests), 0)
+
+    def test_requesting_valid_category(self):
+        user = create_user_object()
+        name = user.username
+        UserEntity.objects.create(name=name)
+        self.client.login(username="testuser", password='123')
+        data = {'name':'test request'}
+        response = self.client.post(reverse('rango:add_category', kwargs={'username':name}), data)
+        requests = MediaCategory.objects.filter(approved=False)
+        self.assertEqual(len(requests), 1)
+        self.assertRedirects(response, '/rango/')
+
+class ShowCategoryRequestsViewTest(TestCase):
+
+    """
+    Still need to write a test for ShowCategoryRequestsView.post()
+    """
+
+
+    @classmethod
+    def setUpTestData(cls):
+        for i in range(10):
+            MediaCategory.objects.create(name="Test request" + str(i), approved=False)
+
+    def test_show_category_requests_logged_out(self):
+        user = create_user_object()
+        name = user.username
+        response = self.client.get(reverse('rango:view_category_requests',kwargs={'username':name}))
+        self.assertEqual(response.status_code, 302)
+
+    def test_show_category_requests_logged_in(self):
+        user = create_user_object()
+        name = user.username
+        UserEntity.objects.create(name=name)
+        self.client.login(username="testuser", password='123')
+        response = self.client.get(reverse('rango:view_category_requests',kwargs={'username':name}))
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_uses_correct_template(self):
+        user = create_user_object()
+        name = user.username
+        UserEntity.objects.create(name=name)
+        self.client.login(username="testuser", password='123')
+        response = self.client.get(reverse('rango:view_category_requests',kwargs={'username':name}))
+        self.assertTemplateUsed(response, 'rango/category_requests.html')
+
+    def test_show_category_context_dictionary(self):
+        user = create_user_object()
+        name = user.username
+        UserEntity.objects.create(name=name)
+        self.client.login(username="testuser", password='123')
+        response = self.client.get(reverse('rango:view_category_requests', kwargs={'username': name}))
+        test_pending_categories_list = list(MediaCategory.objects.filter(approved=False).order_by('name'))
+        self.assertEqual(test_pending_categories_list, list(response.context['pending_categories']))
+
 
 class RegisterProfileViewTest(TestCase):
 
-    def test_add_category_logged_out(self):
+    """
+    Still need to write test with invalid form
+    """
+
+
+    def test_register_profile_logged_out(self):
         response = self.client.get(reverse('rango:register_profile'))
         self.assertEqual(response.status_code, 302)
 
-    def test_add_category_logged_in(self):
+    def test_register_profile_logged_in(self):
         create_user_object()
         self.client.login(username="testuser", password='123')
         response = self.client.get(reverse('rango:register_profile'))
@@ -88,6 +164,14 @@ class RegisterProfileViewTest(TestCase):
         self.client.login(username="testuser", password='123')
         response = self.client.get(reverse('rango:register_profile'))
         self.assertTemplateUsed(response, 'rango/profile_registration.html')
+
+    def test_registration_with_default_picture(self):
+        create_user_object()
+        self.client.login(username="testuser", password='123')
+        response = self.client.post(reverse('rango:register_profile'))
+        user = list(UserEntity.objects.all())[0]
+        self.assertEqual('Default_profile_picture.jpg', user.profile_picture)
+        self.assertRedirects(response, '/rango/')
 
 class ProfileViewTest(TestCase):
 
@@ -103,6 +187,7 @@ class ProfileViewTest(TestCase):
         self.client.login(username="testuser", password='123')
         response = self.client.get(reverse('rango:profile', kwargs={'username':name}))
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['selecteduser'].username, name)
 
     def test_view_uses_correct_template(self):
         user = create_user_object()
@@ -128,6 +213,106 @@ class ProfileViewTest(TestCase):
 
         expected_medium_order = list(Medium.objects.order_by('-publish_date')[:5])
         self.assertEqual(expected_medium_order, list(contextDict['posts']))
+
+    def test_accessing_non_existent_profile(self):
+        user = create_user_object()
+        self.client.login(username="testuser", password='123')
+        response = self.client.get(reverse('rango:profile', kwargs={'username': 'wrong'}))
+        self.assertRedirects(response, '/rango/')
+
+
+class MediumViewTest(TestCase):
+
+    def test_medium_view_logged_out(self):
+        user = create_user_object()
+        name = user.username
+        response = self.client.get(reverse('rango:new_post', kwargs={'username': name}))
+        self.assertEqual(response.status_code, 302)
+
+    def test_medium_view_logged_in(self):
+        user = create_user_object()
+        name = user.username
+        self.client.login(username="testuser", password='123')
+        response = self.client.get(reverse('rango:new_post', kwargs={'username': name}))
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_uses_correct_template(self):
+        user = create_user_object()
+        name = user.username
+        self.client.login(username="testuser", password='123')
+        response = self.client.get(reverse('rango:new_post', kwargs={'username': name}))
+        self.assertTemplateUsed(response, 'rango/new_post.html')
+
+    def test_medium_view_context_dictionary(self):
+        user = create_user_object()
+        name = user.username
+        self.client.login(username="testuser", password='123')
+        self.response = self.client.get(reverse('rango:new_post', kwargs={'username': name}))
+
+        self.assertTrue('form' in self.response.context)
+        self.assertTrue('user' in self.response.context)
+        self.assertTrue('category_list' in self.response.context)
+        self.assertTrue('users' in self.response.context)
+
+
+
+# Having trouble with thumbnail field, cant mock it
+
+"""
+    def test_adding_post(self):
+        user = create_user_object()
+        name = user.username
+        self.client.login(username="testuser", password='123')
+
+        test_author = UserEntity.objects.create(name="Author")
+
+        data = {'name': 'test post',
+                'description': 'test description',
+                'views': 10,
+                'likes': 5,
+                'medium_author': test_author}
+
+        self.client.post(reverse('rango:new_post', kwargs={'username': name}), data=data)
+        posts = Medium.objects.filter(name='test post')
+        self.assertEqual(len(posts),1)
+        
+"""
+
+class MyCollectionViewTest(TestCase):
+
+    def test_view_url_exists_at_desired_location(self):
+        user = create_user_object()
+        name = user.username
+        UserEntity.objects.create(name=name)
+        self.client.login(username="testuser", password='123')
+        response = self.client.get(reverse('rango:my_collection', kwargs={'username': name}))
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_uses_correct_template(self):
+        user = create_user_object()
+        name = user.username
+        UserEntity.objects.create(name=name)
+        self.client.login(username="testuser", password='123')
+        response = self.client.get(reverse('rango:my_collection', kwargs={'username': name}))
+        self.assertTemplateUsed(response, 'rango/my_collection.html')
+
+class SearchViewTest(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        for i in range(5):
+            author = UserEntity.objects.create(name="Author " + str(i))
+            Medium.objects.create(name="Test medium by author " + str(i), medium_author=author)
+
+    def test_view_url_exists_at_desired_location(self):
+        response = self.client.get(reverse('rango:search'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_search_with_query(self):
+        for medium in Medium.objects.all():
+            data = {'query':medium.name}
+            response = self.client.post(reverse('rango:search'), data)
+            self.assertTrue(medium in response.context['results'])
 
 
 def create_user_object():
