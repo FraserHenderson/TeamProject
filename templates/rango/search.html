@@ -29,11 +29,6 @@
                             <strong>Category:</strong> <a href="{% url 'rango:category' post.medium_category.name %}">{{post.medium_category.name}}</a><br/>
                             <strong>Description:</strong> {{post.description}}<br/>
                             <strong>Publish Date:</strong> {{post.publish_date}}<br/>
-                            <strong>Views:</strong> {{post.views}}<br/>
-                            <strong>Likes:</strong> <span id="like_count">{{post.likes}}</span>
-                            {% if user.is_authenticated %}
-                            <button class="btn btn-primary btn-sm like_btn" data-postid="{{ post }}" type="button">Like</button>
-                            {% endif %}
                         </p>
                     </div>
                 </div>

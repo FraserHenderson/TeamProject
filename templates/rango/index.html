@@ -8,7 +8,7 @@ Homepage
 {% block body_block %}
 <div class="jumbotron p-1">
   <div class="container">
-    <h1 class="jumbotron-heading">Team 5B</h1>
+    <h1 class="jumbotron-heading">The Stash</h1>
   </div>
 </div>
 
@@ -37,11 +37,6 @@ Homepage
                         <strong>Category:</strong> <a href="{% url 'rango:category' post.medium_category.name %}">{{post.medium_category.name}}</a><br/>
                         <strong>Description:</strong> {{post.description}}<br/>
                         <strong>Publish Date:</strong> {{post.publish_date}}<br/>
-                        <strong>Views:</strong> {{post.views}}<br/>
-                        <strong>Likes:</strong> <span id="like_count">{{post.likes}}</span>
-                        {% if user.is_authenticated %}
-                        <button class="btn btn-primary btn-sm like_btn" data-postid="{{ post }}" type="button">Like</button>
-                        {% endif %}
                     </p>
                 </div>
               {% endfor %}
@@ -64,7 +59,7 @@ Homepage
             {% if users %}
             <ul class="list-group">
               {% for target_user in users %}
-              <li class="nav-item "><a class="nav-link" href="{% url 'rango:my_collection' target_user.name %}">{{ target_user.name }}</a></li>
+              <ul class="nav-item " list-style-type:none><a class="nav-link" href="{% url 'rango:my_collection' target_user.name %}">{{ target_user.name }}</a></ul>
               {% endfor %}
             </ul>
             {% else %}
@@ -84,7 +79,7 @@ Homepage
 <h3>Posts</h3>
 {% for category in media_categories %}
 <li class="list-group-item">
-    <a class="nav-link" href="{% url 'rango:category' category.name %}">{{ category.name }}</a>
+    <a class="nav-link"  href="{% url 'rango:category' category.name %}">{{ category.name }}</a>
 </li>
 {% endfor %}
 {% endblock %}
