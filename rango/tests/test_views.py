@@ -1,3 +1,6 @@
+import os
+
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 
 from django.urls import reverse
@@ -85,7 +88,7 @@ class AddCategoryRequestViewTest(TestCase):
         UserEntity.objects.create(name=name)
         self.client.login(username="testuser", password='123')
 
-        response = self.client.post(reverse('the_stash:add_category', kwargs={'username': name}))
+        self.client.post(reverse('the_stash:add_category', kwargs={'username': name}))
         requests = MediaCategory.objects.filter(approved=False)
         self.assertEqual(len(requests), 0)
 
@@ -98,7 +101,7 @@ class AddCategoryRequestViewTest(TestCase):
         response = self.client.post(reverse('the_stash:add_category', kwargs={'username':name}), data)
         requests = MediaCategory.objects.filter(approved=False)
         self.assertEqual(len(requests), 1)
-        self.assertRedirects(response, '/rango/')
+        self.assertRedirects(response, '/the_stash/')
 
 class ShowCategoryRequestsViewTest(TestCase):
 
@@ -147,9 +150,6 @@ class ShowCategoryRequestsViewTest(TestCase):
         response = self.client.post(reverse('the_stash:view_category_requests', kwargs={'username': name}),{'dropdown':MediaCategory.objects.get(name="Test request1").name})
         self.assertTrue(MediaCategory.objects.get(name="Test request1").approved)
 
-
-
-
 class RegisterProfileViewTest(TestCase):
 
     def test_register_profile_logged_out(self):
@@ -174,7 +174,7 @@ class RegisterProfileViewTest(TestCase):
         response = self.client.post(reverse('the_stash:register_profile'))
         user = list(UserEntity.objects.all())[0]
         self.assertEqual('Default_profile_picture.jpg', user.profile_picture)
-        self.assertRedirects(response, '/rango/')
+        self.assertRedirects(response, '/the_stash/')
 
 class ProfileViewTest(TestCase):
 
@@ -221,8 +221,7 @@ class ProfileViewTest(TestCase):
         create_user_object()
         self.client.login(username="testuser", password='123')
         response = self.client.get(reverse('the_stash:profile', kwargs={'username': 'wrong'}))
-        self.assertRedirects(response, '/rango/')
-
+        self.assertRedirects(response, '/the_stash/')
 
 """
 
@@ -233,8 +232,6 @@ class ProfileViewTest(TestCase):
         response = self.client.post(reverse('the_stash:profile', kwargs={'username': name}))
         
 """
-
-
 
 class MediumViewTest(TestCase):
 
@@ -269,29 +266,24 @@ class MediumViewTest(TestCase):
         self.assertTrue('category_list' in self.response.context)
         self.assertTrue('users' in self.response.context)
 
-
-
-# Having trouble with thumbnail field, cant mock it
-
-"""
     def test_adding_post(self):
         user = create_user_object()
         name = user.username
         self.client.login(username="testuser", password='123')
+        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        image_path = BASE_DIR + "\\tests\\test_image.jpg"
+        test_thumbnail=SimpleUploadedFile(name="test_image.jpg", content=open(image_path, 'rb').read(), content_type='image/jpeg')
+        MediaCategory.objects.create(name="testcat", approved=True)
 
-        test_author = UserEntity.objects.create(name="Author")
 
         data = {'name': 'test post',
                 'description': 'test description',
-                'views': 10,
-                'likes': 5,
-                'medium_author': test_author}
+                'thumbnail': test_thumbnail,
+                'dropdown':MediaCategory.objects.get(name='testcat')}
 
         self.client.post(reverse('the_stash:new_post', kwargs={'username': name}), data=data)
         posts = Medium.objects.filter(name='test post')
         self.assertEqual(len(posts),1)
-        
-"""
 
 class MyCollectionViewTest(TestCase):
 
