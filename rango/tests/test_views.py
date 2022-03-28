@@ -9,11 +9,13 @@ class IndexViewTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        author = UserEntity.objects.create(name="Author")
         for i in range(5):
-            Medium.objects.create(name="Medium" + str(i), medium_author=author)
-            UserEntity.objects.create(name="UserEntityTest" + str(i))
-            MediaCategory.objects.create(name="MediaCategoryTest" + str(i))
+            media = MediaCategory.objects.create(name="test media" + str(i), approved=True)
+            user = create_user_object()
+            user.username = "test user " + str(i)
+            user.email = "test" + str(i) + "test.com"
+            author = UserEntity.objects.create(name=user.username)
+            Medium.objects.create(name="test medium" + str(i), medium_author=author, medium_category=media)
 
     def test_view_url_exists_at_desired_location(self):
         response = self.client.get(reverse('rango:index'))
@@ -220,6 +222,13 @@ class ProfileViewTest(TestCase):
         response = self.client.get(reverse('rango:profile', kwargs={'username': 'wrong'}))
         self.assertRedirects(response, '/rango/')
 
+    def test_proflie_view_post(self):
+        user = create_user_object()
+        name = user.username
+        self.client.login(username="testuser", password='123')
+        response = self.client.get(reverse('rango:profile', kwargs={'username': name}))
+
+
 
 class MediumViewTest(TestCase):
 
@@ -303,16 +312,32 @@ class SearchViewTest(TestCase):
         for i in range(5):
             author = UserEntity.objects.create(name="Author " + str(i))
             Medium.objects.create(name="Test medium by author " + str(i), medium_author=author)
+            MediaCategory.objects.create(name="Test Media" + str(i))
+            user = create_user_object()
+            user.username = "User" + str(i)
+            user.email = "test" + str(i) + "@test.com"
+            UserEntity.objects.create(name=user.username)
 
     def test_view_url_exists_at_desired_location(self):
         response = self.client.get(reverse('rango:search'))
         self.assertEqual(response.status_code, 200)
 
     def test_search_with_query(self):
+
         for medium in Medium.objects.all():
-            data = {'query':medium.name}
+            data = {'query': medium.name}
             response = self.client.post(reverse('rango:search'), data)
-            self.assertTrue(medium in response.context['results'])
+            self.assertTrue(medium.name in response.context['query'])
+
+        for user in UserEntity.objects.all():
+            data = {'query':user.name}
+            response = self.client.post(reverse('rango:search'), data)
+            self.assertTrue(user.name in response.context['query'])
+
+        for media in MediaCategory.objects.all():
+            data = {'query':media.name}
+            response = self.client.post(reverse('rango:search'), data)
+            self.assertTrue(media.name in response.context['query'])
 
 
 def create_user_object():
