@@ -2,7 +2,7 @@ from django.urls import path
 from rango import views
 
 
-app_name = 'rango'
+app_name = 'the_stash'
 
 
 urlpatterns = [

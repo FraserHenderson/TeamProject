@@ -93,7 +93,7 @@ class Chapter4IndexPageTests(TestCase):
     Image tests are in the Chapter4StaticMediaTests suite.
     """
     def setUp(self):
-        self.response = self.client.get(reverse('rango:index'))
+        self.response = self.client.get(reverse('the_stash:index'))
     
     def test_index_uses_template(self):
         """
@@ -213,7 +213,7 @@ class Chapter4ExerciseTests(TestCase):
     def setUp(self):
         self.project_base_dir = os.getcwd()
         self.template_dir = os.path.join(self.project_base_dir, 'templates', 'rango')
-        self.about_response = self.client.get(reverse('rango:about'))
+        self.about_response = self.client.get(reverse('the_stash:about'))
     
     def test_about_template_exists(self):
         """

@@ -25,8 +25,8 @@
                     <div class="card-body">
                         <img src={{ MEDIA_URL }}{{post.thumbnail}} alt={{ post }}>
                         <p class="card-text">
-                            <strong>Author:</strong> <a href="{% url 'rango:my_collection' post.medium_author.name %}">{{post.medium_author.name}}</a><br/>
-                            <strong>Category:</strong> <a href="{% url 'rango:category' post.medium_category.name %}">{{post.medium_category.name}}</a><br/>
+                            <strong>Author:</strong> <a href="{% url 'the_stash:my_collection' post.medium_author.name %}">{{post.medium_author.name}}</a><br/>
+                            <strong>Category:</strong> <a href="{% url 'the_stash:category' post.medium_category.name %}">{{post.medium_category.name}}</a><br/>
                             <strong>Description:</strong> {{post.description}}<br/>
                             <strong>Publish Date:</strong> {{post.publish_date}}<br/>
                         </p>
@@ -36,7 +36,7 @@
                 
             {% else %}
                 {% for result in results %}
-                    <h5><a href="{% url 'rango:my_collection' result.name %}">{{result.name}}</a></h5>
+                    <h5><a href="{% url 'the_stash:my_collection' result.name %}">{{result.name}}</a></h5>
                 {% endfor %}
             {% endif %}
             

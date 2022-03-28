@@ -63,7 +63,7 @@ class AddCategoryRequestView(View):
         
         if form.is_valid():
             form.save(commit=True)
-            return redirect('rango:index')
+            return redirect('the_stash:index')
         else:
             print(form.errors)
 
@@ -93,7 +93,7 @@ class ShowCategoryRequestsView(View):
         approved_category.approved = True
         approved_category.save()
 
-        return redirect('rango:index')
+        return redirect('the_stash:index')
 
 class GotoView(View):
     def get(self, request):
@@ -102,7 +102,7 @@ class GotoView(View):
         try:
             selected_page = Page.objects.get(id=page_id)
         except Page.DoesNotExist:
-            return redirect(reverse('rango:index'))
+            return redirect(reverse('the_stash:index'))
             
         selected_page.views = selected_page.views + 1
         selected_page.save()
@@ -131,7 +131,7 @@ class RegisterProfileView(View):
             u.profile_picture = form['picture'].value()
             u.save()
 
-            return redirect('rango:index')
+            return redirect('the_stash:index')
         else:
             print(form.errors)
         
@@ -159,7 +159,7 @@ class ProfileView(View):
             (user, userprofile, form, posts, users_list) = self.get_user_details(username)
             ensure_that_corresponding_UserEntity_exists(username)
         except TypeError:
-            return redirect('rango:index')
+            return redirect('the_stash:index')
         
         context_dict = {}
         context_dict['userprofile'] = userprofile
@@ -176,7 +176,7 @@ class ProfileView(View):
             (user, userprofile, form, posts, users_list) = self.get_user_details(username)
             ensure_that_corresponding_UserEntity_exists(username)
         except TypeError:
-            return redirect('rango:index')
+            return redirect('the_stash:index')
         
         if user == request.user:  # Added for authentication exercise.
             form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
@@ -188,7 +188,7 @@ class ProfileView(View):
                 user_entity.profile_picture = form['picture'].value()
                 user_entity.save()
 
-                return redirect('rango:profile', user.username)
+                return redirect('the_stash:profile', user.username)
             else:
                 print(form.errors)
         
@@ -209,7 +209,7 @@ class MediumView(View):
             user = get_user(username)
             form = MediumForm()
         except TypeError:
-            return redirect('rango:index')
+            return redirect('the_stash:index')
         
         category_list = MediaCategory.objects.filter(approved=True).order_by('name')
         users_list = UserEntity.objects.order_by('name')
@@ -228,7 +228,7 @@ class MediumView(View):
             user = get_user(username)
             form = MediumForm(request.POST, request.FILES)
         except TypeError:
-            return redirect('rango:index')
+            return redirect('the_stash:index')
         
         if form.is_valid():
             medium = form.save(commit=False)
@@ -239,7 +239,7 @@ class MediumView(View):
             medium.publish_date = datetime.strptime((str(datetime.now()))[:19], '%Y-%m-%d %H:%M:%S')
             medium.save()
                 
-            return redirect('rango:my_collection', user.username)
+            return redirect('the_stash:my_collection', user.username)
         else:
             print(form.errors)
         

@@ -33,8 +33,8 @@ Homepage
                     <img src={{ MEDIA_URL }}{{post.thumbnail}} alt={{ post }} width=50% height=50%>
     		    <br>
                     <p class="card-text">
-                        <strong>Author:</strong> <a href="{% url 'rango:my_collection' post.medium_author.name %}">{{post.medium_author.name}}</a><br/>
-                        <strong>Category:</strong> <a href="{% url 'rango:category' post.medium_category.name %}">{{post.medium_category.name}}</a><br/>
+                        <strong>Author:</strong> <a href="{% url 'the_stash:my_collection' post.medium_author.name %}">{{post.medium_author.name}}</a><br/>
+                        <strong>Category:</strong> <a href="{% url 'the_stash:category' post.medium_category.name %}">{{post.medium_category.name}}</a><br/>
                         <strong>Description:</strong> {{post.description}}<br/>
                         <strong>Publish Date:</strong> {{post.publish_date}}<br/>
                     </p>
@@ -59,7 +59,7 @@ Homepage
             {% if users %}
             <ul class="list-group">
               {% for target_user in users %}
-              <ul class="nav-item " list-style-type:none><a class="nav-link" href="{% url 'rango:my_collection' target_user.name %}">{{ target_user.name }}</a></ul>
+              <ul class="nav-item " list-style-type:none><a class="nav-link" href="{% url 'the_stash:my_collection' target_user.name %}">{{ target_user.name }}</a></ul>
               {% endfor %}
             </ul>
             {% else %}
@@ -79,7 +79,7 @@ Homepage
 <h3>Posts</h3>
 {% for category in media_categories %}
 <li class="list-group-item">
-    <a class="nav-link"  href="{% url 'rango:category' category.name %}">{{ category.name }}</a>
+    <a class="nav-link"  href="{% url 'the_stash:category' category.name %}">{{ category.name }}</a>
 </li>
 {% endfor %}
 {% endblock %}

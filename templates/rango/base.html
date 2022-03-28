@@ -37,18 +37,18 @@
 
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'rango:index' %}">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'rango:about' %}">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'the_stash:index' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'the_stash:about' %}">About Us</a></li>
 
                     {% if user.is_authenticated %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'rango:profile' user.username %}">My Profile</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'rango:my_collection' user.username %}">My Collection</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'rango:new_post' user.username %}">Create New Post</a>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'rango:add_category' user.username %}">New Category Request</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'the_stash:profile' user.username %}">My Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'the_stash:my_collection' user.username %}">My Collection</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'the_stash:new_post' user.username %}">Create New Post</a>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'the_stash:add_category' user.username %}">New Category Request</a></li>
                         {% endif %}
 
                         {% if user.is_superuser %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'rango:view_category_requests' user.username %}">Category Requests</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'the_stash:view_category_requests' user.username %}">Category Requests</a></li>
                         {% endif %}
 
                     </ul>
@@ -56,7 +56,7 @@
                 
                 <div class="collapse navbar-collapse " id="navbarNavDarkDropdown">
                     <ul class="navbar-nav">
-                        <form class="d-flex" method=POST action="{% url 'rango:search' %}">
+                        <form class="d-flex" method=POST action="{% url 'the_stash:search' %}">
                             {% csrf_token %}
                             
                             <div class="form-group">
@@ -158,7 +158,7 @@
         <div class="sidebar-sticky">
 
             {% for target_user in users %}
-            <ul class="nav-item " list-style-type:none><a class="nav-link" href="{% url 'rango:my_collection' target_user.name %}">{{ target_user.name }}</a></ul>
+            <ul class="nav-item " list-style-type:none><a class="nav-link" href="{% url 'the_stash:my_collection' target_user.name %}">{{ target_user.name }}</a></ul>
             {% endfor %}
         </div>
     </nav>

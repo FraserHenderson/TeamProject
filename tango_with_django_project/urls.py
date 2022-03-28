@@ -25,11 +25,11 @@ from django.urls import reverse
 
 class MyRegistrationView(RegistrationView):
     def get_success_url(self, user):
-        return reverse('rango:register_profile')
+        return reverse('the_stash:register_profile')
 
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
-    path('rango/', include('rango.urls')),
+    path('the_stash/', include('rango.urls')),
     path('admin/', admin.site.urls),
     path('accounts/register/', MyRegistrationView.as_view(), name='registration_register'),
     path('accounts/', include('registration.backends.simple.urls')),
