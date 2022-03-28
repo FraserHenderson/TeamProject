@@ -17,7 +17,7 @@ Collection for {{ target_user.name }}
     <br/>
     <div class="card">
         <div class="card-header">
-            <strong>{{ post }}</strong>
+            <strong>{{ post.name }}</strong>
         </div>
         <div class="card-body">
             <img src={{ MEDIA_URL }}{{post.thumbnail}} alt={{ post }}>
@@ -27,7 +27,10 @@ Collection for {{ target_user.name }}
                 <strong>Description:</strong> {{post.description}}<br/>
                 <strong>Publish Date:</strong> {{post.publish_date}}<br/>
                 <strong>Views:</strong> {{post.views}}<br/>
-                <strong>Likes:</strong> {{post.likes}}
+                <strong>Likes:</strong> <span id="like_count">{{post.likes}}</span>
+                {% if user.is_authenticated %}
+                <button class="btn btn-primary btn-sm like_btn" data-postid="{{ post }}" type="button">Like</button>
+                {% endif %}
             </p>
         </div>
     </div>

@@ -27,7 +27,7 @@ Homepage
             <ul class="list-group">
               {% for post in posts %}
               <div class="card-header">
-                <strong>{{ post }}</strong>
+                <strong>{{ post.name }}</strong>
                 </div>
                 <div class="card-body">
                     <img src={{ MEDIA_URL }}{{post.thumbnail}} alt={{ post }} width=50% height=50%>
@@ -38,7 +38,10 @@ Homepage
                         <strong>Description:</strong> {{post.description}}<br/>
                         <strong>Publish Date:</strong> {{post.publish_date}}<br/>
                         <strong>Views:</strong> {{post.views}}<br/>
-                        <strong>Likes:</strong> {{post.likes}}
+                        <strong>Likes:</strong> <span id="like_count">{{post.likes}}</span>
+                        {% if user.is_authenticated %}
+                        <button class="btn btn-primary btn-sm like_btn" data-postid="{{ post }}" type="button">Like</button>
+                        {% endif %}
                     </p>
                 </div>
               {% endfor %}
@@ -78,10 +81,10 @@ Homepage
 {% endblock %}
 
 {% block sidebar_block %}
-<h5>Posts</h5>
+<h3>Posts</h3>
 {% for category in media_categories %}
 <li class="list-group-item">
-    <button type="button" class="btn btn-sm" >{{ category.name }}</button>
+    <a class="nav-link" href="{% url 'rango:category' category.name %}">{{ category.name }}</a>
 </li>
 {% endfor %}
 {% endblock %}

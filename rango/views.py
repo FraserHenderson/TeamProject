@@ -356,3 +356,20 @@ def visitor_cookie_handler(request):
         request.session['last_visit'] = last_visit_cookie
     
     request.session['visits'] = visits
+    
+class LikeMediaView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        post_id = request.GET['post_id']
+        print(post_id)
+        
+        try:
+            post = Medium.objects.get(name=post_id)
+        except Medium.DoesNotExist:
+            return HttpResponse(-1)
+        except ValueError:
+            return HttpResponse(-1)
+        
+        post.likes = post.likes + 1
+        post.save()
+        return HttpResponse(post.likes)
