@@ -102,11 +102,6 @@ class AddCategoryRequestViewTest(TestCase):
 
 class ShowCategoryRequestsViewTest(TestCase):
 
-    """
-    Still need to write a test for ShowCategoryRequestsView.post()
-    """
-
-
     @classmethod
     def setUpTestData(cls):
         for i in range(10):
@@ -143,13 +138,19 @@ class ShowCategoryRequestsViewTest(TestCase):
         test_pending_categories_list = list(MediaCategory.objects.filter(approved=False).order_by('name'))
         self.assertEqual(test_pending_categories_list, list(response.context['pending_categories']))
 
+    def test_approving_category(self):
+        user = create_user_object()
+        name = user.username
+        UserEntity.objects.create(name=name)
+        self.client.login(username="testuser", password='123')
+        self.assertFalse(MediaCategory.objects.get(name="Test request1").approved)
+        response = self.client.post(reverse('rango:view_category_requests', kwargs={'username': name}),{'dropdown':MediaCategory.objects.get(name="Test request1").name})
+        self.assertTrue(MediaCategory.objects.get(name="Test request1").approved)
+
+
+
 
 class RegisterProfileViewTest(TestCase):
-
-    """
-    Still need to write test with invalid form
-    """
-
 
     def test_register_profile_logged_out(self):
         response = self.client.get(reverse('rango:register_profile'))
@@ -217,16 +218,21 @@ class ProfileViewTest(TestCase):
         self.assertEqual(expected_medium_order, list(contextDict['posts']))
 
     def test_accessing_non_existent_profile(self):
-        user = create_user_object()
+        create_user_object()
         self.client.login(username="testuser", password='123')
         response = self.client.get(reverse('rango:profile', kwargs={'username': 'wrong'}))
         self.assertRedirects(response, '/rango/')
+
+
+"""
 
     def test_proflie_view_post(self):
         user = create_user_object()
         name = user.username
         self.client.login(username="testuser", password='123')
-        response = self.client.get(reverse('rango:profile', kwargs={'username': name}))
+        response = self.client.post(reverse('rango:profile', kwargs={'username': name}))
+        
+"""
 
 
 
@@ -339,6 +345,31 @@ class SearchViewTest(TestCase):
             response = self.client.post(reverse('rango:search'), data)
             self.assertTrue(media.name in response.context['query'])
 
+class MediaCategoryViewTests(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        media = MediaCategory.objects.create(name="test category", approved=True)
+        user = create_user_object()
+        author = UserEntity.objects.create(name=user.username)
+        for i in range(10):
+            Medium.objects.create(name="test medium" + str(i), medium_author=author, medium_category=media)
+
+    def test_view_url_exists_at_desired_location(self):
+        response = self.client.get(reverse('rango:category', kwargs={'category': "test category"}))
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_uses_correct_template(self):
+        response = self.client.get(reverse('rango:category', kwargs={'category': "test category"}))
+        self.assertTemplateUsed(response, 'rango/category.html')
+
+    def test_media_category_view_context_dictionary(self):
+        response = self.client.get(reverse('rango:category', kwargs={'category': "test category"}))
+        self.assertEqual(response.status_code, 200)
+        media = MediaCategory.objects.get(name="test category")
+        test_posts_list = Medium.objects.filter(medium_category=media).order_by('-publish_date')
+        self.assertTrue(response.context['target_category'] == media)
+        self.assertTrue(list(response.context['posts']) == list(test_posts_list))
 
 def create_user_object():
     user = User.objects.get_or_create(username='testuser', first_name='Test', last_name='User', email='test@test.com')[0]
