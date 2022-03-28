@@ -85,7 +85,7 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-dark bg-dark" aria-labelledby="navbarDarkDropdownMenuLink">
                                   <li><a class="dropdown-item" href="{% url 'auth_password_change' %}">Change Password</a></li>
-                                  <li><a class="dropdown-item" href="{% url 'auth_logout' %}?next=/rango/">Logout</a></li>
+                                  <li><a class="dropdown-item" href="{% url 'auth_logout' %}?next=/the_stash/">Logout</a></li>
                                   {% else %}
                                   <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Sign In
@@ -128,7 +128,7 @@
 
 <div class="container-fluid">
     <div class="row">
-        <nav class="col-md-1 d-none d-md-block bg-light sidebar">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
             <div class="sidebar-sticky">
                 {% block sidebar_block %} {% endblock %}
             </div>
