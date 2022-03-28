@@ -361,6 +361,7 @@ class LikeMediaView(View):
     @method_decorator(login_required)
     def get(self, request):
         post_id = request.GET['post_id']
+        logger.warning(post_id)
         print(post_id)
         
         try:
